@@ -7,70 +7,13 @@ interface Props {
   shapeName: string;
 }
 
-/* ─── Per-character with gradient color + hover glow ─── */
-function HeroChar({ char, index, total }: { char: string; index: number; total: number }) {
-  const [scramble, setScramble] = useState(char);
-  const [hovering, setHovering] = useState(false);
-  const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%◈◉⬡';
-
-  useEffect(() => {
-    if (!hovering) { setScramble(char); return; }
-    let frame = 0;
-    const timer = setInterval(() => {
-      if (frame < 6) {
-        setScramble(pool[Math.floor(Math.random() * pool.length)]);
-      } else {
-        setScramble(char);
-        clearInterval(timer);
-      }
-      frame++;
-    }, 30);
-    return () => clearInterval(timer);
-  }, [hovering, char]);
-
-  if (char === ' ') return <span className="inline-block w-[0.28em]" />;
-
-  // Gradient flow: cyan → blue → purple across the title
-  const t = total > 1 ? index / (total - 1) : 0;
-  const h = 185 + t * 75; // hue from 185 (cyan) to 260 (purple)
-  const color = `hsl(${h}, 80%, 70%)`;
-  const glowColor = `hsla(${h}, 85%, 65%, 0.5)`;
-
-  return (
-    <motion.span
-      onMouseEnter={() => setHovering(true)}
-      onMouseLeave={() => setHovering(false)}
-      initial={{ opacity: 0, y: 60, filter: 'blur(14px)', scale: 0.7 }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-      transition={{
-        duration: 0.8,
-        delay: 0.3 + index * 0.035,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-      whileHover={{
-        y: -14,
-        scale: 1.18,
-        textShadow: `0 0 40px ${glowColor}, 0 0 80px ${glowColor}, 0 4px 20px rgba(0,0,0,0.4)`,
-        transition: { type: 'spring', stiffness: 400, damping: 12 },
-      }}
-      className="inline-block cursor-default font-display"
-      style={{
-        color,
-        textShadow: `0 0 20px hsla(${h}, 80%, 60%, 0.15)`,
-      }}
-    >
-      {scramble}
-    </motion.span>
-  );
-}
-
 /* ─── Shimmer badge ─── */
 function ShimmerBadge() {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
       animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.7, delay: 0.1 }}
       className="relative inline-flex rounded-full overflow-hidden mb-8 sm:mb-10"
     >
       <motion.div
@@ -92,9 +35,44 @@ function ShimmerBadge() {
 }
 
 /* ─── Main Hero ─── */
-const title = 'AI That Feels Human.';
-
 export default function Hero({ shapeName }: Props) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const [spotlightPos, setSpotlightPos] = useState({ x: 300, y: 60 });
+  const [hasMouseEntered, setHasMouseEntered] = useState(false);
+
+  // Auto-animate spotlight when no mouse (mobile or initial state)
+  useEffect(() => {
+    if (hasMouseEntered) return;
+    let raf: number;
+    const animate = () => {
+      const t = Date.now() / 3000;
+      const rect = titleRef.current?.getBoundingClientRect();
+      if (rect) {
+        setSpotlightPos({
+          x: rect.width * (0.2 + 0.6 * (Math.sin(t) * 0.5 + 0.5)),
+          y: rect.height * (0.25 + 0.5 * (Math.cos(t * 0.7) * 0.5 + 0.5)),
+        });
+      }
+      raf = requestAnimationFrame(animate);
+    };
+    animate();
+    return () => cancelAnimationFrame(raf);
+  }, [hasMouseEntered]);
+
+  const handleTitleMove = (e: React.MouseEvent) => {
+    setHasMouseEntered(true);
+    const rect = titleRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setSpotlightPos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  const handleTitleLeave = () => {
+    setHasMouseEntered(false);
+  };
+
   // Magnetic CTA
   const btnRef = useRef<HTMLDivElement>(null);
   const bx = useMotionValue(0);
@@ -102,7 +80,6 @@ export default function Hero({ shapeName }: Props) {
   const sbx = useSpring(bx, { stiffness: 120, damping: 18 });
   const sby = useSpring(by, { stiffness: 120, damping: 18 });
 
-  // Second CTA
   const btn2Ref = useRef<HTMLDivElement>(null);
   const b2x = useMotionValue(0);
   const b2y = useMotionValue(0);
@@ -131,40 +108,49 @@ export default function Hero({ shapeName }: Props) {
     window.dispatchEvent(new Event('particle:morph'));
   };
 
-  const chars = title.split('');
-
   return (
     <section
       onClick={triggerMorph}
-      className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-5 sm:px-8 z-10 overflow-hidden cursor-crosshair"
+      className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-5 sm:px-8 z-10 overflow-hidden"
     >
       {/* Badge */}
       <ShimmerBadge />
 
-      {/* One-liner Title */}
-      <h1 className="font-display font-bold text-center leading-[0.92] tracking-[-0.04em] select-none text-[2.4rem] sm:text-[3.6rem] md:text-[5rem] lg:text-[6.5rem] xl:text-[8rem] 2xl:text-[9rem]">
-        {chars.map((ch, i) => (
-          <HeroChar key={i} char={ch} index={i} total={chars.length} />
-        ))}
-      </h1>
-
-      {/* Shape indicator — clickable pill */}
-      <motion.button
-        onClick={(e) => {
-          e.stopPropagation();
-          triggerMorph();
+      {/* Title — mouse-following spotlight gradient */}
+      <motion.h1
+        ref={titleRef}
+        onMouseMove={handleTitleMove}
+        onMouseLeave={handleTitleLeave}
+        initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
+        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
+        transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="font-display font-bold text-center leading-[0.88] tracking-[-0.045em] select-none cursor-default
+          text-[2.6rem] sm:text-[4.2rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] 2xl:text-[10.5rem] p-2"
+        style={{
+          background: `radial-gradient(600px circle at ${spotlightPos.x}px ${spotlightPos.y}px, #00f3ff 0%, #818cf8 25%, rgba(255,255,255,0.12) 55%, rgba(255,255,255,0.05) 100%)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          textShadow: '0 0 80px rgba(0,243,255,0.06), 0 0 160px rgba(129,140,248,0.03)',
         }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.8 }}
-        className="mt-6 sm:mt-8 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-[#00f3ff]/25 transition-all duration-500 group cursor-pointer"
-        whileHover={{ scale: 1.05 }}
+      >
+        AI That Feels Human.
+      </motion.h1>
+
+      {/* Shape morph indicator */}
+      <motion.button
+        onClick={(e) => { e.stopPropagation(); triggerMorph(); }}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.6 }}
+        className="mt-5 sm:mt-7 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-[#00f3ff]/20 transition-all duration-500 group cursor-pointer"
+        whileHover={{ scale: 1.05, borderColor: 'rgba(0,243,255,0.2)' }}
         whileTap={{ scale: 0.92 }}
       >
         <motion.span
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-          className="text-[#00f3ff]/40 text-xs"
+          className="text-[#00f3ff]/35 text-xs"
         >
           ◈
         </motion.span>
@@ -172,12 +158,12 @@ export default function Hero({ shapeName }: Props) {
           key={shapeName}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="font-mono text-[10px] sm:text-xs text-white/25 tracking-[0.15em] uppercase group-hover:text-white/50 transition-colors"
+          className="font-mono text-[10px] sm:text-xs text-white/20 tracking-[0.15em] uppercase group-hover:text-white/45 transition-colors"
         >
           {shapeName}
         </motion.span>
-        <span className="font-mono text-[7px] sm:text-[8px] text-white/10 tracking-wider uppercase ml-1 group-hover:text-white/20 transition-colors">
-          Tap to morph
+        <span className="hidden sm:inline font-mono text-[7px] text-white/10 tracking-wider uppercase ml-1 group-hover:text-white/20 transition-colors">
+          Click to morph
         </span>
       </motion.button>
 
@@ -185,22 +171,22 @@ export default function Hero({ shapeName }: Props) {
       <motion.p
         initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.7, delay: 1.5 }}
-        className="mt-5 sm:mt-6 text-[13px] sm:text-base md:text-lg text-white/25 text-center max-w-md sm:max-w-xl leading-relaxed px-2"
+        transition={{ duration: 0.7, delay: 1.4 }}
+        className="mt-5 sm:mt-6 text-[13px] sm:text-base md:text-lg text-white/20 text-center max-w-md sm:max-w-xl leading-relaxed px-2"
       >
         Next-generation conversational AI so natural,{' '}
-        <span className="text-white/40">your customers won&apos;t know the difference.</span>
+        <span className="text-white/35">your customers won&apos;t know the difference.</span>
       </motion.p>
 
       {/* CTAs */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 1.9 }}
+        transition={{ duration: 0.7, delay: 1.8 }}
         className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Primary — magnetic */}
+        {/* Primary magnetic */}
         <motion.div
           ref={btnRef}
           style={{ x: sbx, y: sby }}
@@ -211,7 +197,7 @@ export default function Hero({ shapeName }: Props) {
         >
           <a
             href="#agents"
-            className="group relative inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 bg-[#00f3ff] text-black font-heading font-bold rounded-full text-sm sm:text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,243,255,0.4)]"
+            className="group relative inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 bg-[#00f3ff] text-black font-heading font-bold rounded-full text-sm sm:text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,243,255,0.35)]"
           >
             <span className="relative z-10 flex items-center gap-2">
               Meet Our Agents
@@ -226,7 +212,7 @@ export default function Hero({ shapeName }: Props) {
           </a>
         </motion.div>
 
-        {/* Secondary — magnetic ghost */}
+        {/* Secondary ghost */}
         <motion.div
           ref={btn2Ref}
           style={{ x: sb2x, y: sb2y }}
@@ -237,7 +223,7 @@ export default function Hero({ shapeName }: Props) {
         >
           <a
             href="#about"
-            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm text-white/35 border border-white/[0.08] hover:text-white/60 hover:border-white/[0.15] hover:shadow-[0_0_30px_rgba(255,255,255,0.04)] transition-all duration-500 font-medium"
+            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm text-white/30 border border-white/[0.08] hover:text-white/55 hover:border-white/[0.15] hover:shadow-[0_0_30px_rgba(255,255,255,0.03)] transition-all duration-500 font-medium"
           >
             Learn More
           </a>
@@ -248,7 +234,7 @@ export default function Hero({ shapeName }: Props) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 2.3 }}
+        transition={{ delay: 2.2 }}
         className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-5"
         onClick={(e) => e.stopPropagation()}
       >
@@ -261,15 +247,11 @@ export default function Hero({ shapeName }: Props) {
             key={t.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.4 + i * 0.1 }}
+            transition={{ delay: 2.3 + i * 0.1 }}
             className="flex items-center gap-1.5 group cursor-default"
           >
-            <span className="text-[#00f3ff]/25 text-[10px] group-hover:text-[#00f3ff]/50 transition-colors">
-              {t.icon}
-            </span>
-            <span className="font-mono text-[9px] sm:text-[10px] text-white/[0.15] group-hover:text-white/30 transition-colors tracking-wider">
-              {t.label}
-            </span>
+            <span className="text-[#00f3ff]/20 text-[10px] group-hover:text-[#00f3ff]/45 transition-colors">{t.icon}</span>
+            <span className="font-mono text-[9px] sm:text-[10px] text-white/[0.12] group-hover:text-white/25 transition-colors tracking-wider">{t.label}</span>
           </motion.div>
         ))}
       </motion.div>
@@ -278,7 +260,7 @@ export default function Hero({ shapeName }: Props) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 3 }}
+        transition={{ delay: 2.8 }}
         className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2"
       >
         <motion.div
@@ -286,12 +268,12 @@ export default function Hero({ shapeName }: Props) {
           transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           className="flex flex-col items-center gap-2"
         >
-          <span className="font-mono text-[7px] text-white/10 tracking-[0.2em] uppercase">Scroll</span>
+          <span className="font-mono text-[7px] text-white/8 tracking-[0.2em] uppercase">Scroll</span>
           <div className="w-5 h-8 rounded-full border border-white/[0.06] flex justify-center pt-2">
             <motion.div
-              animate={{ opacity: [0.6, 0.1, 0.6], y: [0, 8, 0] }}
+              animate={{ opacity: [0.5, 0.1, 0.5], y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-              className="w-[2px] h-[6px] bg-[#00f3ff]/20 rounded-full"
+              className="w-[2px] h-[6px] bg-[#00f3ff]/15 rounded-full"
             />
           </div>
         </motion.div>

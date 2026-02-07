@@ -3,12 +3,13 @@
  * Each returns Float32Array of [x,y,z, x,y,z, ...] positions.
  */
 
-export function sphere(n: number, r = 10): Float32Array<ArrayBuffer> {
+export function sphere(n: number, r = 14): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const th = Math.random() * Math.PI * 2;
     const ph = Math.acos(2 * Math.random() - 1);
-    const d = r * Math.cbrt(Math.random());
+    // Shell distribution — particles between 60-100% of radius (no dense center)
+    const d = r * (0.6 + Math.random() * 0.4);
     p[i * 3] = d * Math.sin(ph) * Math.cos(th);
     p[i * 3 + 1] = d * Math.sin(ph) * Math.sin(th);
     p[i * 3 + 2] = d * Math.cos(ph);
@@ -16,7 +17,7 @@ export function sphere(n: number, r = 10): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function galaxy(n: number, r = 12): Float32Array<ArrayBuffer> {
+export function galaxy(n: number, r = 16): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   const arms = 3;
   for (let i = 0; i < n; i++) {
@@ -33,7 +34,7 @@ export function galaxy(n: number, r = 12): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function lorenz(n: number, s = 0.35): Float32Array<ArrayBuffer> {
+export function lorenz(n: number, s = 0.4): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   let x = 0.1, y = 0, z = 0;
   const sigma = 10, rho = 28, beta = 8 / 3, dt = 0.005;
@@ -50,19 +51,19 @@ export function lorenz(n: number, s = 0.35): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function heart(n: number, s = 0.55): Float32Array<ArrayBuffer> {
+export function heart(n: number, s = 0.6): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const t = (i / n) * Math.PI * 2;
     const jitter = 0.85 + Math.random() * 0.3;
     p[i * 3] = 16 * Math.pow(Math.sin(t), 3) * s * jitter;
     p[i * 3 + 1] = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * s * jitter;
-    p[i * 3 + 2] = (Math.random() - 0.5) * 3 * s;
+    p[i * 3 + 2] = (Math.random() - 0.5) * 3.5 * s;
   }
   return p;
 }
 
-export function mobius(n: number, R = 7, w = 2.8): Float32Array<ArrayBuffer> {
+export function mobius(n: number, R = 8, w = 3): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const u = Math.random() * Math.PI * 2;
@@ -74,7 +75,7 @@ export function mobius(n: number, R = 7, w = 2.8): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function menger(n: number, s = 9): Float32Array<ArrayBuffer> {
+export function menger(n: number, s = 11): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   const check = (x: number, y: number, z: number): boolean => {
     for (let i = 0; i < 3; i++) {
@@ -97,22 +98,22 @@ export function menger(n: number, s = 9): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function penrose(n: number, s = 7): Float32Array<ArrayBuffer> {
+export function penrose(n: number, s = 9): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   const verts = [[0, s * 0.85, 0], [-s * 0.75, -s * 0.42, 0], [s * 0.75, -s * 0.42, 0]];
-  const thick = 0.7;
+  const thick = 0.8;
   for (let i = 0; i < n; i++) {
     const e = i % 3;
     const t = Math.random();
     const [x1, y1] = verts[e], [x2, y2] = verts[(e + 1) % 3];
     p[i * 3] = x1 + (x2 - x1) * t + (Math.random() - 0.5) * thick;
     p[i * 3 + 1] = y1 + (y2 - y1) * t + (Math.random() - 0.5) * thick;
-    p[i * 3 + 2] = (Math.random() - 0.5) * thick + (e - 1) * 0.4;
+    p[i * 3 + 2] = (Math.random() - 0.5) * thick + (e - 1) * 0.5;
   }
   return p;
 }
 
-export function fractalTree(n: number, s = 7): Float32Array<ArrayBuffer> {
+export function fractalTree(n: number, s = 8): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   const pts: [number, number, number, number][] = [];
   const grow = (x: number, y: number, z: number, a: number, l: number, d: number) => {
@@ -139,7 +140,7 @@ export const SHAPES = [
   { name: 'Galaxy Spiral', fn: galaxy },
   { name: 'Lorenz Attractor', fn: lorenz },
   { name: 'Cardioid Heart', fn: heart },
-  { name: 'Mobius Strip', fn: mobius },
+  { name: 'Möbius Strip', fn: mobius },
   { name: 'Menger Sponge', fn: menger },
   { name: 'Penrose Triangle', fn: penrose },
   { name: 'Fractal Tree', fn: fractalTree },

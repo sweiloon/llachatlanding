@@ -7,7 +7,7 @@ import { SHAPES } from '@/lib/shapes';
 const MORPH_SPEED = 1.8;
 const HOLD_TIME = 5;
 
-/* ─── Vertex Shader: mouse repulsion + sparkle + organic motion ─── */
+/* ─── Vertex Shader ─── */
 const VERT = `
 attribute float aSize;
 attribute vec3 aColor;
@@ -24,52 +24,54 @@ void main(){
   vec3 col = aColor;
   vec3 pos = position;
 
-  // Organic floating motion
+  // Organic floating
   float r = aRand;
-  pos.x += sin(uTime * 0.5 + r * 6.28) * 0.28;
-  pos.y += cos(uTime * 0.35 + r * 3.14) * 0.22;
-  pos.z += sin(uTime * 0.4 + r * 4.5) * 0.18;
+  pos.x += sin(uTime * 0.45 + r * 6.28) * 0.2;
+  pos.y += cos(uTime * 0.3 + r * 3.14) * 0.18;
+  pos.z += sin(uTime * 0.35 + r * 4.5) * 0.14;
 
   // Mouse repulsion field
   vec3 toMouse = pos - uMouse3D;
   float mouseDist = length(toMouse);
-  float repulseRadius = 6.0;
+  float repulseRadius = 5.0;
   if(mouseDist < repulseRadius && uMouseActive > 0.5) {
     float force = 1.0 - mouseDist / repulseRadius;
-    force = force * force * 4.0;
-    vec3 pushDir = normalize(toMouse + vec3(0.001));
-    pos += pushDir * force;
-    // Brighten particles near cursor
-    col = mix(col, vec3(1.0, 1.0, 1.0), force * 0.4);
+    force = force * force * 3.0;
+    pos += normalize(toMouse + vec3(0.001)) * force;
+    col = mix(col, vec3(0.6, 0.95, 1.0), force * 0.35);
   }
 
-  // Sparkle + twinkle
-  float sparkle = sin(uTime * 3.5 + r * 123.456) * 0.5 + 0.5;
-  float twinkle = pow(max(sin(uTime * 2.5 + r * 789.0), 0.0), 25.0);
-  vAlpha = aAlpha * (0.55 + sparkle * 0.35 + twinkle * 1.0);
-  vCol = col + vec3(twinkle * 0.5);
+  // Twinkle — sharp occasional flash
+  float twinkle = pow(max(sin(uTime * 2.0 + r * 789.0), 0.0), 30.0);
+  float shimmer = sin(uTime * 3.0 + r * 123.0) * 0.5 + 0.5;
+  vAlpha = aAlpha * (0.6 + shimmer * 0.25 + twinkle * 1.5);
+  vCol = col + vec3(twinkle * 0.4);
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-  float sizeMod = 1.0 + twinkle * 2.5 + sparkle * 0.15;
-  gl_PointSize = aSize * sizeMod * uDpr * (300.0 / -mv.z);
+  float sizeMod = 1.0 + twinkle * 1.8;
+
+  // Depth fog — dim distant particles
+  float depth = clamp((-mv.z - 15.0) / 40.0, 0.0, 1.0);
+  vAlpha *= 1.0 - depth * 0.5;
+
+  gl_PointSize = aSize * sizeMod * uDpr * (90.0 / -mv.z);
   gl_Position = projectionMatrix * mv;
 }`;
 
-/* ─── Fragment Shader: bright glow with hot core ─── */
+/* ─── Fragment Shader — sharp star with subtle bloom ─── */
 const FRAG = `
 varying vec3 vCol;
 varying float vAlpha;
 
 void main(){
-  vec2 uv = gl_PointCoord - vec2(0.5);
-  float d = length(uv);
+  float d = length(gl_PointCoord - vec2(0.5));
   if(d > 0.5) discard;
 
-  // Exponential glow falloff with bright white core
-  float glow = exp(-d * 5.0);
-  float core = exp(-d * 16.0);
-  vec3 col = vCol * glow + vec3(1.0) * core * 0.7;
-  float alpha = vAlpha * glow;
+  // Tight core + soft bloom
+  float core = exp(-d * 22.0);
+  float bloom = exp(-d * 5.0) * 0.25;
+  vec3 col = vCol * (core + bloom) + vec3(1.0) * core * 0.3;
+  float alpha = vAlpha * (core + bloom);
 
   gl_FragColor = vec4(col, alpha);
 }`;
@@ -83,10 +85,6 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
   const boxRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef({
     renderer: null as THREE.WebGLRenderer | null,
-    scene: null as THREE.Scene | null,
-    camera: null as THREE.PerspectiveCamera | null,
-    points: null as THREE.Points | null,
-    mat: null as THREE.ShaderMaterial | null,
     count: 10000,
     cur: null as Float32Array | null,
     tgt: null as Float32Array | null,
@@ -107,12 +105,10 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
     const s = stateRef.current;
     s.dead = false;
 
-    // Adaptive particle count
     const isMobile = window.innerWidth < 768;
     const count = isMobile ? 6000 : 10000;
     s.count = count;
 
-    // WebGL check
     const tc = document.createElement('canvas');
     if (!tc.getContext('webgl') && !tc.getContext('experimental-webgl')) {
       el.classList.add('webgl-fallback');
@@ -131,9 +127,7 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
 
     const scene = new THREE.Scene();
     const cam = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
-    cam.position.z = 30;
-    s.scene = scene;
-    s.camera = cam;
+    cam.position.z = 32;
 
     // Init particles
     const init = SHAPES[0].fn(count);
@@ -150,36 +144,37 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
     const rands = new Float32Array(count);
 
     for (let i = 0; i < count; i++) {
-      sizes[i] = 1.0 + Math.random() * 2.8;
-      alphas[i] = 0.18 + Math.random() * 0.55;
+      const isStar = Math.random() < 0.04; // 4% are bright stars
+      sizes[i] = isStar ? (1.8 + Math.random() * 2.0) : (0.4 + Math.random() * 1.0);
+      alphas[i] = isStar ? (0.15 + Math.random() * 0.25) : (0.04 + Math.random() * 0.1);
       rands[i] = Math.random();
 
       const t = Math.random();
-      if (t < 0.35) {
+      if (t < 0.38) {
         // Cyan
-        colors[i * 3] = 0.0;
+        colors[i * 3] = 0.1 + Math.random() * 0.1;
         colors[i * 3 + 1] = 0.7 + Math.random() * 0.3;
         colors[i * 3 + 2] = 0.9 + Math.random() * 0.1;
-      } else if (t < 0.58) {
+      } else if (t < 0.62) {
         // Blue
-        colors[i * 3] = 0.1 + Math.random() * 0.15;
-        colors[i * 3 + 1] = 0.5 + Math.random() * 0.3;
+        colors[i * 3] = 0.15 + Math.random() * 0.1;
+        colors[i * 3 + 1] = 0.5 + Math.random() * 0.25;
         colors[i * 3 + 2] = 0.9 + Math.random() * 0.1;
-      } else if (t < 0.78) {
+      } else if (t < 0.82) {
         // Purple
-        colors[i * 3] = 0.45 + Math.random() * 0.2;
-        colors[i * 3 + 1] = 0.3 + Math.random() * 0.2;
+        colors[i * 3] = 0.5 + Math.random() * 0.15;
+        colors[i * 3 + 1] = 0.35 + Math.random() * 0.15;
         colors[i * 3 + 2] = 0.85 + Math.random() * 0.15;
-      } else if (t < 0.92) {
-        // White-hot sparkle
-        colors[i * 3] = 0.85 + Math.random() * 0.15;
-        colors[i * 3 + 1] = 0.9 + Math.random() * 0.1;
+      } else if (t < 0.93) {
+        // White-hot
+        colors[i * 3] = 0.9 + Math.random() * 0.1;
+        colors[i * 3 + 1] = 0.92 + Math.random() * 0.08;
         colors[i * 3 + 2] = 0.95 + Math.random() * 0.05;
       } else {
-        // Pink/magenta accent
-        colors[i * 3] = 0.75 + Math.random() * 0.25;
-        colors[i * 3 + 1] = 0.25 + Math.random() * 0.2;
-        colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;
+        // Pink accent
+        colors[i * 3] = 0.8 + Math.random() * 0.2;
+        colors[i * 3 + 1] = 0.3 + Math.random() * 0.15;
+        colors[i * 3 + 2] = 0.7 + Math.random() * 0.25;
       }
     }
 
@@ -201,11 +196,9 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
         uMouseActive: { value: 0.0 },
       },
     });
-    s.mat = mat;
 
     const pts = new THREE.Points(geo, mat);
     scene.add(pts);
-    s.points = pts;
 
     // Input handlers
     const isTouchDevice = 'ontouchstart' in window;
@@ -216,7 +209,6 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
       s.mouse.y = -(e.clientY / window.innerHeight - 0.5) * 2;
       s.mouseActive = true;
     };
-
     const onTouch = (e: TouchEvent) => {
       const touch = e.touches[0];
       if (touch) {
@@ -225,18 +217,13 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
         s.mouseActive = true;
       }
     };
-
-    const onTouchEnd = () => {
-      s.mouseActive = false;
-    };
-
+    const onTouchEnd = () => { s.mouseActive = false; };
     const onResize = () => {
       cam.aspect = window.innerWidth / window.innerHeight;
       cam.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
-    // Manual morph trigger via custom event
     const triggerMorph = () => {
       if (s.morphing) return;
       const next = (s.shapeIdx + 1) % SHAPES.length;
@@ -254,10 +241,7 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
     window.addEventListener('resize', onResize);
     window.addEventListener('particle:morph', triggerMorph);
 
-    // Reusable vectors for mouse projection
     const ndcVec = new THREE.Vector3();
-    const camPos = new THREE.Vector3();
-
     const clock = new THREE.Clock();
     s.lastSwap = 0;
 
@@ -267,7 +251,7 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
       const t = clock.getElapsedTime();
       const dt = Math.min(clock.getDelta(), 0.05);
 
-      // Auto-cycle shapes
+      // Auto-cycle
       if (!s.morphing && t - s.lastSwap > HOLD_TIME) {
         const next = (s.shapeIdx + 1) % SHAPES.length;
         s.start = new Float32Array(s.cur!);
@@ -278,46 +262,44 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
         onShapeChange?.(SHAPES[next].name);
       }
 
-      // Morph interpolation
+      // Morph
       if (s.morphing) {
         s.morphT += dt / MORPH_SPEED;
         if (s.morphT >= 1) { s.morphT = 1; s.morphing = false; s.lastSwap = t; }
         const ease = s.morphT < 0.5
           ? 4 * s.morphT * s.morphT * s.morphT
           : 1 - Math.pow(-2 * s.morphT + 2, 3) / 2;
-        const pos = s.points!.geometry.attributes.position as THREE.BufferAttribute;
+        const pos = pts.geometry.attributes.position as THREE.BufferAttribute;
         for (let i = 0; i < count * 3; i++) {
           s.cur![i] = s.start![i] + (s.tgt![i] - s.start![i]) * ease;
         }
         pos.needsUpdate = true;
       }
 
-      // Project mouse to 3D world space (z=0 plane)
-      ndcVec.set(s.mouse.x, s.mouse.y, 0.5);
-      ndcVec.unproject(cam);
-      camPos.copy(cam.position);
-      ndcVec.sub(camPos).normalize();
-      const dist = -camPos.z / ndcVec.z;
-      const mouseWorld = camPos.add(ndcVec.multiplyScalar(dist));
+      // Project mouse to z=0 plane
+      ndcVec.set(s.mouse.x, s.mouse.y, 0.5).unproject(cam);
+      const dir = ndcVec.sub(cam.position).normalize();
+      const dist = -cam.position.z / dir.z;
+      const mx = cam.position.x + dir.x * dist;
+      const my = cam.position.y + dir.y * dist;
+      const mz = cam.position.z + dir.z * dist;
 
       mat.uniforms.uTime.value = t;
-      mat.uniforms.uMouse3D.value.copy(mouseWorld);
+      mat.uniforms.uMouse3D.value.set(mx, my, mz);
       mat.uniforms.uMouseActive.value = s.mouseActive ? 1.0 : 0.0;
 
-      // More dramatic camera following
-      const targetX = s.mouse.x * 4;
-      const targetY = s.mouse.y * 3;
-      cam.position.x += (targetX - cam.position.x) * 0.025;
-      cam.position.y += (targetY - cam.position.y) * 0.025;
-      cam.position.z = 30;
+      // Camera follows mouse
+      const camTargetX = s.mouse.x * 3;
+      const camTargetY = s.mouse.y * 2;
+      cam.position.x += (camTargetX - cam.position.x) * 0.02;
+      cam.position.y += (camTargetY - cam.position.y) * 0.02;
+      cam.position.z = 32;
       cam.lookAt(0, 0, 0);
 
-      // Continuous rotation + breathing
-      if (s.points) {
-        s.points.rotation.y += 0.002;
-        s.points.rotation.x = Math.sin(t * 0.15) * 0.12;
-        s.points.rotation.z = Math.cos(t * 0.1) * 0.05;
-      }
+      // Rotation
+      pts.rotation.y += 0.0015;
+      pts.rotation.x = Math.sin(t * 0.12) * 0.08;
+      pts.rotation.z = Math.cos(t * 0.08) * 0.04;
 
       renderer.render(scene, cam);
     };
