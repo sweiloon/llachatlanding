@@ -33,11 +33,11 @@ export default function Home() {
       {/* 3D Particle Background */}
       <ParticleUniverse onShapeChange={handleShapeChange} audioEnabled={false} />
 
-      {/* Vignette */}
+      {/* Vignette — lighter so particles shine through */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,5,5,0.55)_0%,rgba(5,5,5,0.1)_50%,rgba(5,5,5,0.5)_100%)]" />
-        <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-b from-[#050505]/80 to-transparent" />
-        <div className="absolute bottom-0 inset-x-0 h-48 bg-gradient-to-t from-[#050505]/80 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,5,5,0.15)_0%,rgba(5,5,5,0.02)_45%,rgba(5,5,5,0.3)_100%)]" />
+        <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#050505]/40 to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#050505]/40 to-transparent" />
       </div>
 
       {/* Nav */}

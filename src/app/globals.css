@@ -4,6 +4,7 @@
   --font-sans: var(--font-body);
   --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
 }
 
 :root {
@@ -25,6 +26,9 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 }
 .font-mono, pre, code {
   font-family: var(--font-mono), monospace;
+}
+.font-display {
+  font-family: var(--font-display), var(--font-heading), system-ui, sans-serif;
 }
 
 /* Selection */

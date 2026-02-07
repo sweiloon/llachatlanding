@@ -62,14 +62,14 @@ export function heart(n: number, s = 0.55): Float32Array<ArrayBuffer> {
   return p;
 }
 
-export function torus(n: number, R = 6, r = 2.2): Float32Array<ArrayBuffer> {
+export function mobius(n: number, R = 7, w = 2.8): Float32Array<ArrayBuffer> {
   const p = new Float32Array(n * 3);
   for (let i = 0; i < n; i++) {
     const u = Math.random() * Math.PI * 2;
-    const v = Math.random() * Math.PI * 2;
-    p[i * 3] = (R + r * Math.cos(v)) * Math.cos(u);
-    p[i * 3 + 1] = r * Math.sin(v);
-    p[i * 3 + 2] = (R + r * Math.cos(v)) * Math.sin(u);
+    const v = (Math.random() - 0.5) * w;
+    p[i * 3] = (R + v * Math.cos(u / 2)) * Math.cos(u);
+    p[i * 3 + 1] = (R + v * Math.cos(u / 2)) * Math.sin(u);
+    p[i * 3 + 2] = v * Math.sin(u / 2);
   }
   return p;
 }
@@ -139,7 +139,7 @@ export const SHAPES = [
   { name: 'Galaxy Spiral', fn: galaxy },
   { name: 'Lorenz Attractor', fn: lorenz },
   { name: 'Cardioid Heart', fn: heart },
-  { name: 'Mobius Torus', fn: torus },
+  { name: 'Mobius Strip', fn: mobius },
   { name: 'Menger Sponge', fn: menger },
   { name: 'Penrose Triangle', fn: penrose },
   { name: 'Fractal Tree', fn: fractalTree },

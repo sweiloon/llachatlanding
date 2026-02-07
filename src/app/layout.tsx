@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Manrope, Inter, Fira_Code } from "next/font/google";
+import { Manrope, Inter, Fira_Code, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -19,6 +19,12 @@ const firaCode = Fira_Code({
   weight: ["400", "500"],
 });
 
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["700"],
+});
+
 export const metadata: Metadata = {
   title: "LLachat AI — AI That Feels Human",
   description:
@@ -32,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${manrope.variable} ${inter.variable} ${firaCode.variable} antialiased bg-[#050505] text-white`}>
+      <body className={`${manrope.variable} ${inter.variable} ${firaCode.variable} ${spaceGrotesk.variable} antialiased bg-[#050505] text-white`}>
         {children}
       </body>
     </html>
