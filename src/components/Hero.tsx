@@ -1,10 +1,45 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
 
 interface Props {
   shapeName: string;
+}
+
+/* ─── Word with gradient color + hover ─── */
+const WORDS = [
+  { text: 'AI', color: '#00f3ff', glow: '0,243,255' },
+  { text: 'That', color: '#38bdf8', glow: '56,189,248' },
+  { text: 'Feels', color: '#818cf8', glow: '129,140,248' },
+  { text: 'Human.', color: '#c084fc', glow: '192,132,252' },
+];
+
+function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 50, filter: 'blur(12px)' }}
+      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      transition={{
+        duration: 0.8,
+        delay: 0.4 + index * 0.12,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      whileHover={{
+        y: -10,
+        scale: 1.06,
+        textShadow: `0 0 50px rgba(${word.glow},0.5), 0 0 100px rgba(${word.glow},0.25), 0 4px 20px rgba(0,0,0,0.3)`,
+        transition: { type: 'spring', stiffness: 300, damping: 15 },
+      }}
+      className="inline-block mr-[0.22em] last:mr-0 cursor-default"
+      style={{
+        color: word.color,
+        textShadow: `0 0 30px rgba(${word.glow},0.15)`,
+      }}
+    >
+      {word.text}
+    </motion.span>
+  );
 }
 
 /* ─── Shimmer badge ─── */
@@ -36,44 +71,6 @@ function ShimmerBadge() {
 
 /* ─── Main Hero ─── */
 export default function Hero({ shapeName }: Props) {
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const [spotlightPos, setSpotlightPos] = useState({ x: 300, y: 60 });
-  const [hasMouseEntered, setHasMouseEntered] = useState(false);
-
-  // Auto-animate spotlight when no mouse (mobile or initial state)
-  useEffect(() => {
-    if (hasMouseEntered) return;
-    let raf: number;
-    const animate = () => {
-      const t = Date.now() / 3000;
-      const rect = titleRef.current?.getBoundingClientRect();
-      if (rect) {
-        setSpotlightPos({
-          x: rect.width * (0.2 + 0.6 * (Math.sin(t) * 0.5 + 0.5)),
-          y: rect.height * (0.25 + 0.5 * (Math.cos(t * 0.7) * 0.5 + 0.5)),
-        });
-      }
-      raf = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => cancelAnimationFrame(raf);
-  }, [hasMouseEntered]);
-
-  const handleTitleMove = (e: React.MouseEvent) => {
-    setHasMouseEntered(true);
-    const rect = titleRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    setSpotlightPos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
-  const handleTitleLeave = () => {
-    setHasMouseEntered(false);
-  };
-
-  // Magnetic CTA
   const btnRef = useRef<HTMLDivElement>(null);
   const bx = useMotionValue(0);
   const by = useMotionValue(0);
@@ -113,38 +110,27 @@ export default function Hero({ shapeName }: Props) {
       onClick={triggerMorph}
       className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-5 sm:px-8 z-10 overflow-hidden"
     >
+      {/* Subtle dark backdrop behind text for readability */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[52%] w-[800px] h-[200px] bg-[#050505]/25 rounded-full blur-[100px] pointer-events-none" />
+
       {/* Badge */}
       <ShimmerBadge />
 
-      {/* Title — mouse-following spotlight gradient */}
-      <motion.h1
-        ref={titleRef}
-        onMouseMove={handleTitleMove}
-        onMouseLeave={handleTitleLeave}
-        initial={{ opacity: 0, filter: 'blur(20px)', y: 30 }}
-        animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
-        transition={{ duration: 1.2, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-        className="font-display font-bold text-center leading-[0.88] tracking-[-0.045em] select-none cursor-default
-          text-[2.6rem] sm:text-[4.2rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] 2xl:text-[10.5rem] p-2"
-        style={{
-          background: `radial-gradient(600px circle at ${spotlightPos.x}px ${spotlightPos.y}px, #00f3ff 0%, #818cf8 25%, rgba(255,255,255,0.12) 55%, rgba(255,255,255,0.05) 100%)`,
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          textShadow: '0 0 80px rgba(0,243,255,0.06), 0 0 160px rgba(129,140,248,0.03)',
-        }}
-      >
-        AI That Feels Human.
-      </motion.h1>
+      {/* Title — word-by-word gradient */}
+      <h1 className="relative font-display font-bold text-center leading-[0.88] tracking-[-0.045em] select-none text-[2.6rem] sm:text-[4.2rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] 2xl:text-[10.5rem]">
+        {WORDS.map((w, i) => (
+          <HeroWord key={w.text} word={w} index={i} />
+        ))}
+      </h1>
 
-      {/* Shape morph indicator */}
+      {/* Shape indicator — clickable */}
       <motion.button
         onClick={(e) => { e.stopPropagation(); triggerMorph(); }}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.6 }}
         className="mt-5 sm:mt-7 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-[#00f3ff]/20 transition-all duration-500 group cursor-pointer"
-        whileHover={{ scale: 1.05, borderColor: 'rgba(0,243,255,0.2)' }}
+        whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.92 }}
       >
         <motion.span
@@ -158,7 +144,7 @@ export default function Hero({ shapeName }: Props) {
           key={shapeName}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="font-mono text-[10px] sm:text-xs text-white/20 tracking-[0.15em] uppercase group-hover:text-white/45 transition-colors"
+          className="font-mono text-[10px] sm:text-xs text-white/25 tracking-[0.15em] uppercase group-hover:text-white/50 transition-colors"
         >
           {shapeName}
         </motion.span>
@@ -186,7 +172,6 @@ export default function Hero({ shapeName }: Props) {
         className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Primary magnetic */}
         <motion.div
           ref={btnRef}
           style={{ x: sbx, y: sby }}
@@ -201,18 +186,12 @@ export default function Hero({ shapeName }: Props) {
           >
             <span className="relative z-10 flex items-center gap-2">
               Meet Our Agents
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}
-              >
-                →
-              </motion.span>
+              <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}>→</motion.span>
             </span>
             <div className="absolute top-0 left-[-100%] w-[60%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 group-hover:left-[200%] transition-all duration-700" />
           </a>
         </motion.div>
 
-        {/* Secondary ghost */}
         <motion.div
           ref={btn2Ref}
           style={{ x: sb2x, y: sb2y }}
@@ -268,7 +247,7 @@ export default function Hero({ shapeName }: Props) {
           transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           className="flex flex-col items-center gap-2"
         >
-          <span className="font-mono text-[7px] text-white/8 tracking-[0.2em] uppercase">Scroll</span>
+          <span className="font-mono text-[7px] text-white/10 tracking-[0.2em] uppercase">Scroll</span>
           <div className="w-5 h-8 rounded-full border border-white/[0.06] flex justify-center pt-2">
             <motion.div
               animate={{ opacity: [0.5, 0.1, 0.5], y: [0, 8, 0] }}
