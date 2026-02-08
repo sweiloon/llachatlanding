@@ -39,7 +39,7 @@ function GradientBorderCard({
         transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
         className="absolute inset-[-80%] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         style={{
-          background: 'conic-gradient(from 0deg, transparent 30%, rgba(0,243,255,0.2) 38%, transparent 45%, rgba(56,189,248,0.12) 55%, transparent 65%)',
+          background: 'conic-gradient(from 0deg, transparent 30%, rgba(167,139,250,0.2) 38%, transparent 45%, rgba(129,140,248,0.12) 55%, transparent 65%)',
         }}
       />
 
@@ -53,7 +53,7 @@ function GradientBorderCard({
           <div
             className="absolute inset-0 pointer-events-none rounded-[inherit]"
             style={{
-              background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,243,255,0.05), transparent 55%)`,
+              background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.05), transparent 55%)`,
             }}
           />
         )}
@@ -107,7 +107,7 @@ function CircularProgress() {
         />
         <defs>
           <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00f3ff" />
+            <stop offset="0%" stopColor="#a78bfa" />
             <stop offset="100%" stopColor="#818cf8" />
           </linearGradient>
         </defs>
@@ -156,7 +156,7 @@ function EQMeter() {
             delay: i * 0.07,
             ease: 'easeInOut',
           }}
-          className="w-[3px] sm:w-1 rounded-full origin-bottom bg-gradient-to-t from-[#00f3ff]/40 to-[#00f3ff]/10"
+          className="w-[3px] sm:w-1 rounded-full origin-bottom bg-gradient-to-t from-[#a78bfa]/40 to-[#a78bfa]/10"
           style={{ height: '100%' }}
         />
       ))}
@@ -180,8 +180,8 @@ function OrbitDots() {
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
             style={{
-              background: i === 0 ? '#00f3ff' : i === 1 ? '#38bdf8' : '#818cf8',
-              boxShadow: `0 0 8px ${i === 0 ? '#00f3ff' : i === 1 ? '#38bdf8' : '#818cf8'}40`,
+              background: i === 0 ? '#a78bfa' : i === 1 ? '#818cf8' : '#c4b5fd',
+              boxShadow: `0 0 8px ${i === 0 ? '#a78bfa' : i === 1 ? '#818cf8' : '#c4b5fd'}40`,
             }}
           />
         </motion.div>
@@ -194,11 +194,11 @@ function OrbitDots() {
 function LockPulse() {
   return (
     <motion.div
-      animate={{ boxShadow: ['0 0 0px rgba(0,243,255,0)', '0 0 20px rgba(0,243,255,0.15)', '0 0 0px rgba(0,243,255,0)'] }}
+      animate={{ boxShadow: ['0 0 0px rgba(167,139,250,0)', '0 0 20px rgba(167,139,250,0.15)', '0 0 0px rgba(167,139,250,0)'] }}
       transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
       className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center"
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(0,243,255,0.4)" strokeWidth="2" strokeLinecap="round">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(167,139,250,0.4)" strokeWidth="2" strokeLinecap="round">
         <rect x="3" y="11" width="18" height="11" rx="2" />
         <path d="M7 11V7a5 5 0 0110 0v4" />
       </svg>
@@ -222,7 +222,7 @@ function InfinityLoop() {
         />
         <defs>
           <linearGradient id="infGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00f3ff" stopOpacity="0.4" />
+            <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.4" />
             <stop offset="100%" stopColor="#818cf8" stopOpacity="0.2" />
           </linearGradient>
         </defs>
@@ -240,8 +240,8 @@ export default function Features() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-[10px] text-[#00f3ff]/30 tracking-[0.3em] uppercase">003</span>
-          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#00f3ff]/10 to-transparent origin-left" />
+          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">003</span>
+          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
         </motion.div>
 
         <motion.h2
@@ -274,9 +274,9 @@ export default function Features() {
             <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6 sm:gap-8 md:gap-12">
               {/* Left: text */}
               <div className="flex-1">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#00f3ff]/[0.06] border border-[#00f3ff]/[0.1] mb-4">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#00f3ff]/50" />
-                  <span className="font-mono text-[9px] text-[#00f3ff]/50 tracking-[0.15em] uppercase">Core Technology</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#a78bfa]/[0.06] border border-[#a78bfa]/[0.1] mb-4">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/50" />
+                  <span className="font-mono text-[9px] text-[#a78bfa]/50 tracking-[0.15em] uppercase">Core Technology</span>
                 </div>
 
                 <h3 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight mb-3 sm:mb-4">
@@ -309,7 +309,7 @@ export default function Features() {
             </div>
 
             {/* ASCII art fade-in */}
-            <pre className="absolute bottom-4 right-6 text-[7px] sm:text-[8px] text-[#00f3ff]/[0.04] font-mono leading-tight select-none hidden md:block group-hover:text-[#00f3ff]/[0.08] transition-colors duration-700">
+            <pre className="absolute bottom-4 right-6 text-[7px] sm:text-[8px] text-[#a78bfa]/[0.04] font-mono leading-tight select-none hidden md:block group-hover:text-[#a78bfa]/[0.08] transition-colors duration-700">
 {`┌───────────────────────┐
 │  H U M A N  ≡  A I   │
 │  ████████████████ 97% │
@@ -330,13 +330,13 @@ export default function Features() {
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="text-xl text-[#00f3ff]/40"
+                    className="text-xl text-[#a78bfa]/40"
                   >
                     ◈
                   </motion.div>
                   <EQMeter />
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#00f3ff]/80 transition-colors duration-500 tracking-tight">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">
                   Emotionally Aware
                 </h3>
                 <p className="text-[11px] sm:text-xs text-white/20 leading-relaxed flex-1 group-hover:text-white/30 transition-colors duration-500">
@@ -354,7 +354,7 @@ export default function Features() {
                 <div className="flex items-start justify-between mb-4">
                   <motion.div
                     whileHover={{ rotate: 15, scale: 1.2 }}
-                    className="text-xl text-[#00f3ff]/40 cursor-default"
+                    className="text-xl text-[#a78bfa]/40 cursor-default"
                   >
                     ⬡
                   </motion.div>
@@ -368,7 +368,7 @@ export default function Features() {
                     </svg>
                   </motion.div>
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#00f3ff]/80 transition-colors duration-500 tracking-tight">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">
                   WhatsApp Native
                 </h3>
                 <p className="text-[11px] sm:text-xs text-white/20 leading-relaxed flex-1 group-hover:text-white/30 transition-colors duration-500">
@@ -386,13 +386,13 @@ export default function Features() {
                 <div className="flex items-start justify-between mb-4">
                   <motion.div
                     whileHover={{ rotate: 20, scale: 1.2 }}
-                    className="text-xl text-[#00f3ff]/40 cursor-default"
+                    className="text-xl text-[#a78bfa]/40 cursor-default"
                   >
                     ◎
                   </motion.div>
                   <OrbitDots />
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#00f3ff]/80 transition-colors duration-500 tracking-tight">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">
                   Multi-Domain Expert
                 </h3>
                 <p className="text-[11px] sm:text-xs text-white/20 leading-relaxed flex-1 group-hover:text-white/30 transition-colors duration-500">
@@ -411,13 +411,13 @@ export default function Features() {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 6, ease: 'linear' }}
-                    className="text-xl text-[#00f3ff]/40"
+                    className="text-xl text-[#a78bfa]/40"
                   >
                     ◬
                   </motion.div>
                   <InfinityLoop />
                 </div>
-                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#00f3ff]/80 transition-colors duration-500 tracking-tight">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">
                   Self-Evolving
                 </h3>
                 <p className="text-[11px] sm:text-xs text-white/20 leading-relaxed flex-1 group-hover:text-white/30 transition-colors duration-500">
@@ -434,14 +434,14 @@ export default function Features() {
               <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                 <LockPulse />
                 <div className="flex-1">
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#00f3ff]/80 transition-colors duration-500 tracking-tight">
+                  <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">
                     Enterprise Secure
                   </h3>
                   <p className="text-[11px] sm:text-xs md:text-sm text-white/20 leading-relaxed group-hover:text-white/30 transition-colors duration-500">
                     End-to-end encryption. Custom deployment. Built for businesses that demand military-grade security and full compliance.
                   </p>
                 </div>
-                <pre className="text-[7px] text-[#00f3ff]/[0.04] font-mono leading-tight select-none hidden md:block group-hover:text-[#00f3ff]/[0.08] transition-colors duration-700">
+                <pre className="text-[7px] text-[#a78bfa]/[0.04] font-mono leading-tight select-none hidden md:block group-hover:text-[#a78bfa]/[0.08] transition-colors duration-700">
 {`╔═══════════════════╗
 ║  ◈ ENCRYPTED ◈   ║
 ║  AES-256 / TLS    ║

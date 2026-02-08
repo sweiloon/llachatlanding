@@ -62,13 +62,13 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
         <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 rounded-[inherit]"
           style={{
-            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,243,255,0.06), transparent 60%)`,
+            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.06), transparent 60%)`,
           }}
         />
       )}
 
       {/* Top highlight line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/0 to-transparent group-hover:via-[#00f3ff]/15 transition-all duration-700" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/0 to-transparent group-hover:via-[#a78bfa]/15 transition-all duration-700" />
 
       <div className="relative z-10 p-5 sm:p-6 md:p-8">
         {/* Header */}
@@ -77,7 +77,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
           <motion.div
             whileHover={{ scale: 1.08 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#00f3ff]/15 ring-offset-2 ring-offset-[#050505]"
+            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#a78bfa]/15 ring-offset-2 ring-offset-[#050505]"
           >
             <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="80px" />
             {/* Online dot */}
@@ -88,7 +88,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
 
           <div className="min-w-0 pt-1">
             <h3 className="font-heading text-xl sm:text-2xl font-bold text-white tracking-tight">{agent.name}</h3>
-            <p className="font-mono text-[9px] sm:text-[10px] text-[#00f3ff]/30 tracking-[0.15em] mt-0.5">{agent.type}</p>
+            <p className="font-mono text-[9px] sm:text-[10px] text-[#a78bfa]/30 tracking-[0.15em] mt-0.5">{agent.type}</p>
             <p className="text-xs sm:text-sm text-white/25 mt-1">{agent.role}</p>
           </div>
         </div>
@@ -103,7 +103,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
               initial={{ opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.6 + i * 0.05 }}
-              className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] bg-white/[0.03] text-white/25 border border-white/[0.05] hover:border-[#00f3ff]/15 hover:text-[#00f3ff]/50 transition-all duration-300 cursor-default"
+              className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] bg-white/[0.03] text-white/25 border border-white/[0.05] hover:border-[#a78bfa]/15 hover:text-[#a78bfa]/50 transition-all duration-300 cursor-default"
             >
               {s}
             </motion.span>
@@ -113,7 +113,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
         {/* Chat preview */}
         <div className="rounded-xl bg-black/20 border border-white/[0.04] p-3 sm:p-4 mb-5">
           <div className="flex items-center gap-2 mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#00f3ff]/20 animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/20 animate-pulse" />
             <span className="font-mono text-[8px] sm:text-[9px] text-white/10 tracking-[0.2em] uppercase">Live Preview</span>
           </div>
           <div className="space-y-2">
@@ -128,7 +128,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
                 <div className={`max-w-[82%] px-3 py-2 rounded-2xl text-[11px] sm:text-xs leading-relaxed ${
                   m.from === 'user'
                     ? 'bg-white/[0.06] text-white/35 rounded-br-md'
-                    : 'bg-[#00f3ff]/[0.04] text-white/40 rounded-bl-md border border-[#00f3ff]/[0.06]'
+                    : 'bg-[#a78bfa]/[0.04] text-white/40 rounded-bl-md border border-[#a78bfa]/[0.06]'
                 }`}>
                   {m.text}
                 </div>
@@ -142,13 +142,13 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
               className="flex gap-1 px-3 py-1.5"
             >
               {[0, 150, 300].map(d => (
-                <span key={d} className="w-1.5 h-1.5 rounded-full bg-[#00f3ff]/15 animate-bounce" style={{ animationDelay: `${d}ms` }} />
+                <span key={d} className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/15 animate-bounce" style={{ animationDelay: `${d}ms` }} />
               ))}
             </motion.div>
           </div>
         </div>
 
-        {/* WhatsApp CTA */}
+        {/* WhatsApp CTA — Glossy style */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -158,7 +158,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
             href={`https://wa.me/${agent.number}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group/btn relative flex items-center justify-center gap-2 w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#00f3ff] to-[#0ea5e9] text-white font-heading font-semibold text-xs sm:text-sm overflow-hidden transition-shadow duration-500 hover:shadow-[0_0_30px_rgba(0,243,255,0.15)]"
+            className="btn-glossy group/btn relative flex items-center justify-center gap-2 w-full py-3.5 sm:py-4 font-heading font-semibold text-xs sm:text-sm overflow-hidden"
           >
             <MessageCircle className="w-4 h-4" />
             Chat with {agent.name}
@@ -177,8 +177,8 @@ export default function Agents() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-[10px] text-[#00f3ff]/30 tracking-[0.3em] uppercase">001</span>
-          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#00f3ff]/10 to-transparent origin-left" />
+          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">001</span>
+          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
         </motion.div>
 
         <motion.h2

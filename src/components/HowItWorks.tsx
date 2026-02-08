@@ -39,7 +39,7 @@ function GradientCard({
         transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
         className="absolute inset-[-80%] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         style={{
-          background: 'conic-gradient(from 0deg, transparent 30%, rgba(0,243,255,0.2) 38%, transparent 45%, rgba(56,189,248,0.12) 55%, transparent 65%)',
+          background: 'conic-gradient(from 0deg, transparent 30%, rgba(167,139,250,0.2) 38%, transparent 45%, rgba(129,140,248,0.12) 55%, transparent 65%)',
         }}
       />
       <div className="absolute inset-0 rounded-[inherit] border border-white/[0.06] group-hover:border-transparent transition-colors duration-500 pointer-events-none" />
@@ -49,7 +49,7 @@ function GradientCard({
           <div
             className="absolute inset-0 pointer-events-none rounded-[inherit]"
             style={{
-              background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,243,255,0.05), transparent 55%)`,
+              background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.05), transparent 55%)`,
             }}
           />
         )}
@@ -80,15 +80,15 @@ function ConnectorLine({ delay }: { delay: number }) {
           cx="48"
           cy="10"
           r="2"
-          fill="#00f3ff"
+          fill="#a78bfa"
           initial={{ opacity: 0, scale: 0 }}
           animate={isInView ? { opacity: 0.5, scale: 1 } : {}}
           transition={{ delay: delay + 0.6 }}
         />
         <defs>
           <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(0,243,255,0.15)" />
-            <stop offset="100%" stopColor="rgba(0,243,255,0.3)" />
+            <stop offset="0%" stopColor="rgba(167,139,250,0.15)" />
+            <stop offset="100%" stopColor="rgba(167,139,250,0.3)" />
           </linearGradient>
         </defs>
       </svg>
@@ -108,7 +108,7 @@ function AgentSelector() {
               scale: [1, i === 1 ? 1.2 : 1.05, 1],
               borderColor: [
                 'rgba(255,255,255,0.06)',
-                i === 1 ? 'rgba(0,243,255,0.3)' : 'rgba(255,255,255,0.1)',
+                i === 1 ? 'rgba(167,139,250,0.3)' : 'rgba(255,255,255,0.1)',
                 'rgba(255,255,255,0.06)',
               ],
             }}
@@ -123,7 +123,7 @@ function AgentSelector() {
               <motion.div
                 animate={{ scale: [1, 1.5, 1], opacity: [0.4, 0, 0.4] }}
                 transition={{ repeat: Infinity, duration: 2 }}
-                className="absolute inset-0 rounded-full border border-[#00f3ff]/20"
+                className="absolute inset-0 rounded-full border border-[#a78bfa]/20"
               />
             )}
           </motion.div>
@@ -133,7 +133,7 @@ function AgentSelector() {
       <motion.div
         animate={{ opacity: [0, 1, 0] }}
         transition={{ repeat: Infinity, duration: 2.5, delay: 1 }}
-        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#00f3ff]/40"
+        className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#a78bfa]/40"
       />
     </div>
   );
@@ -164,7 +164,7 @@ function PhoneMockup() {
             animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
             transition={{ delay: 0.8 + i * 0.2, duration: 0.3 }}
             className={`absolute inset-x-1.5 h-[3px] rounded-full origin-left ${
-              i % 2 === 0 ? 'bg-[#00f3ff]/8' : 'bg-white/[0.04] ml-auto w-2/3'
+              i % 2 === 0 ? 'bg-[#a78bfa]/8' : 'bg-white/[0.04] ml-auto w-2/3'
             }`}
             style={{ top: `${2.2 + i * 0.65}rem` }}
           />
@@ -177,7 +177,7 @@ function PhoneMockup() {
           className="absolute bottom-2 left-1.5 flex gap-[2px]"
         >
           {[0, 1, 2].map((i) => (
-            <span key={i} className="w-[2px] h-[2px] rounded-full bg-[#00f3ff]/20" />
+            <span key={i} className="w-[2px] h-[2px] rounded-full bg-[#a78bfa]/20" />
           ))}
         </motion.div>
       </div>
@@ -199,9 +199,9 @@ function ChatBubbles() {
     <div className="relative w-full h-20 sm:h-24 flex items-center justify-center">
       <div className="w-full max-w-[140px] space-y-1.5 px-2">
         {[
-          { align: 'left', w: 'w-[70%]', color: 'bg-[#00f3ff]/[0.06]', delay: 0 },
+          { align: 'left', w: 'w-[70%]', color: 'bg-[#a78bfa]/[0.06]', delay: 0 },
           { align: 'right', w: 'w-[55%]', color: 'bg-white/[0.04]', delay: 0.4 },
-          { align: 'left', w: 'w-[60%]', color: 'bg-[#00f3ff]/[0.06]', delay: 0.8 },
+          { align: 'left', w: 'w-[60%]', color: 'bg-[#a78bfa]/[0.06]', delay: 0.8 },
         ].map((b, i) => (
           <motion.div
             key={i}
@@ -232,7 +232,7 @@ function ChatBubbles() {
               key={i}
               animate={{ y: [0, -2, 0] }}
               transition={{ repeat: Infinity, duration: 0.6, delay: i * 0.1 }}
-              className="w-1 h-1 rounded-full bg-[#00f3ff]/20"
+              className="w-1 h-1 rounded-full bg-[#a78bfa]/20"
             />
           ))}
         </motion.div>
@@ -274,8 +274,8 @@ export default function HowItWorks() {
       <div className="max-w-6xl mx-auto" ref={sectionRef}>
         {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-[10px] text-[#00f3ff]/30 tracking-[0.3em] uppercase">004</span>
-          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#00f3ff]/10 to-transparent origin-left" />
+          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">004</span>
+          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
         </motion.div>
 
         <motion.h2
@@ -319,11 +319,11 @@ export default function HowItWorks() {
                     <motion.div
                       animate={isInView ? { scale: [0, 1] } : {}}
                       transition={{ delay: 0.5 + i * 0.2, type: 'spring', stiffness: 300 }}
-                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#00f3ff]/[0.06] border border-[#00f3ff]/[0.1] flex items-center justify-center font-heading text-xs sm:text-sm font-bold text-[#00f3ff]/50"
+                      className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#a78bfa]/[0.06] border border-[#a78bfa]/[0.1] flex items-center justify-center font-heading text-xs sm:text-sm font-bold text-[#a78bfa]/50"
                     >
                       {step.num}
                     </motion.div>
-                    <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-[#00f3ff]/80 transition-colors duration-500">
+                    <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-[#a78bfa]/80 transition-colors duration-500">
                       {step.title}
                     </h3>
                   </div>
@@ -345,7 +345,7 @@ export default function HowItWorks() {
                       initial={{ scaleY: 0 }}
                       animate={isInView ? { scaleY: 1 } : {}}
                       transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }}
-                      className="w-px h-6 bg-gradient-to-b from-[#00f3ff]/15 to-transparent origin-top"
+                      className="w-px h-6 bg-gradient-to-b from-[#a78bfa]/15 to-transparent origin-top"
                     />
                   </div>
                 </>
@@ -366,14 +366,14 @@ export default function HowItWorks() {
             <motion.span
               animate={{ opacity: [0.3, 0.8, 0.3] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="w-1.5 h-1.5 rounded-full bg-[#00f3ff]/30"
+              className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/30"
             />
             Ready in under 60 seconds
           </div>
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <a
               href="#agents"
-              className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-heading font-bold border border-white/[0.08] text-white/50 hover:text-white hover:border-[#00f3ff]/20 hover:shadow-[0_0_25px_rgba(0,243,255,0.1)] transition-all duration-500"
+              className="btn-glass group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-heading font-bold text-white/50 hover:text-white transition-all duration-500"
             >
               Get Started
               <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>

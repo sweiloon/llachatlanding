@@ -34,7 +34,7 @@ export default function Marquee() {
           <span
             key={i}
             className={`mx-3 sm:mx-5 text-[10px] sm:text-xs tracking-[0.25em] uppercase ${
-              item === '◈' ? 'text-[#00f3ff]/20' : 'text-white/[0.06] font-mono'
+              item === '◈' ? 'text-[#a78bfa]/20' : 'text-white/[0.06] font-mono'
             }`}
           >
             {item}

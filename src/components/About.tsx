@@ -57,7 +57,7 @@ function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
         <div
           className="absolute inset-0 pointer-events-none rounded-[inherit]"
           style={{
-            background: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,243,255,0.05), transparent 60%)`,
+            background: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.05), transparent 60%)`,
           }}
         />
       )}
@@ -66,7 +66,7 @@ function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
         <div className="font-heading text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
           {stat.prefix || ''}{count}{stat.suffix}
         </div>
-        <div className="mt-1.5 text-xs sm:text-sm text-white/40 group-hover:text-[#00f3ff]/50 transition-colors duration-500 font-medium">{stat.label}</div>
+        <div className="mt-1.5 text-xs sm:text-sm text-white/40 group-hover:text-[#a78bfa]/50 transition-colors duration-500 font-medium">{stat.label}</div>
         <div className="mt-0.5 font-mono text-[9px] sm:text-[10px] text-white/15">{stat.desc}</div>
       </div>
     </motion.div>
@@ -99,8 +99,8 @@ export default function About() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-[10px] text-[#00f3ff]/30 tracking-[0.3em] uppercase">002</span>
-          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#00f3ff]/10 to-transparent origin-left" />
+          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">002</span>
+          <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-start">
@@ -135,13 +135,13 @@ export default function About() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="my-6 p-4 sm:p-5 rounded-xl bg-white/[0.02] border-l-2 border-[#00f3ff]/20"
+                className="my-6 p-4 sm:p-5 rounded-xl bg-white/[0.02] border-l-2 border-[#a78bfa]/20"
               >
                 <p className="text-white/45 text-xs sm:text-sm italic">
                   &ldquo;Our engine doesn&apos;t generate responses — it{' '}
-                  <span className="text-[#00f3ff]/60 not-italic font-medium">understands emotion</span>,{' '}
-                  <span className="text-[#00f3ff]/60 not-italic font-medium">mirrors patterns</span>, and{' '}
-                  <span className="text-[#00f3ff]/60 not-italic font-medium">adapts in real-time</span>.&rdquo;
+                  <span className="text-[#a78bfa]/60 not-italic font-medium">understands emotion</span>,{' '}
+                  <span className="text-[#a78bfa]/60 not-italic font-medium">mirrors patterns</span>, and{' '}
+                  <span className="text-[#a78bfa]/60 not-italic font-medium">adapts in real-time</span>.&rdquo;
                 </p>
               </motion.div>
             </motion.div>
@@ -156,7 +156,7 @@ export default function About() {
                   initial={{ opacity: 0 }}
                   animate={isAsciiInView ? { opacity: ch === ' ' || ch === '\n' ? 1 : 0.12 } : {}}
                   transition={{ duration: 0.02, delay: i * 0.002 }}
-                  className="text-[#00f3ff] hover:opacity-50 transition-opacity"
+                  className="text-[#a78bfa] hover:opacity-50 transition-opacity"
                 >
                   {ch}
                 </motion.span>

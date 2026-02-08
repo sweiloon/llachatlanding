@@ -44,7 +44,7 @@ void main(){
     float force = 1.0 - mouseDist / repulseRadius;
     force = force * force * 3.5;
     pos += normalize(toMouse + vec3(0.001)) * force;
-    col = mix(col, vec3(0.7, 1.0, 1.0), force * 0.3);
+    col = mix(col, vec3(0.85, 0.75, 1.0), force * 0.3);
   }
 
   // Twinkle + beat glow
@@ -148,22 +148,28 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
     const rands = new Float32Array(count);
 
     for (let i = 0; i < count; i++) {
-      const isStar = Math.random() < 0.08;
+      const isStar = Math.random() < 0.12;
       sizes[i] = isStar ? (1.6 + Math.random() * 1.8) : (0.5 + Math.random() * 1.0);
       alphas[i] = isStar ? (0.2 + Math.random() * 0.35) : (0.06 + Math.random() * 0.14);
       rands[i] = Math.random();
 
+      // Violet / indigo / purple palette
       const t = Math.random();
-      if (t < 0.38) {
-        colors[i * 3] = 0.05; colors[i * 3 + 1] = 0.7 + Math.random() * 0.3; colors[i * 3 + 2] = 0.95;
-      } else if (t < 0.6) {
-        colors[i * 3] = 0.15; colors[i * 3 + 1] = 0.5 + Math.random() * 0.3; colors[i * 3 + 2] = 0.9;
-      } else if (t < 0.78) {
-        colors[i * 3] = 0.5 + Math.random() * 0.15; colors[i * 3 + 1] = 0.35 + Math.random() * 0.15; colors[i * 3 + 2] = 0.88;
-      } else if (t < 0.92) {
-        colors[i * 3] = 0.9; colors[i * 3 + 1] = 0.92; colors[i * 3 + 2] = 0.97;
+      if (t < 0.35) {
+        // Soft violet
+        colors[i * 3] = 0.55 + Math.random() * 0.15; colors[i * 3 + 1] = 0.4 + Math.random() * 0.2; colors[i * 3 + 2] = 0.95;
+      } else if (t < 0.55) {
+        // Indigo
+        colors[i * 3] = 0.4 + Math.random() * 0.15; colors[i * 3 + 1] = 0.45 + Math.random() * 0.15; colors[i * 3 + 2] = 0.92;
+      } else if (t < 0.72) {
+        // Lavender
+        colors[i * 3] = 0.7 + Math.random() * 0.1; colors[i * 3 + 1] = 0.6 + Math.random() * 0.15; colors[i * 3 + 2] = 0.95;
+      } else if (t < 0.88) {
+        // Pale white-violet
+        colors[i * 3] = 0.85; colors[i * 3 + 1] = 0.82; colors[i * 3 + 2] = 0.97;
       } else {
-        colors[i * 3] = 0.8 + Math.random() * 0.2; colors[i * 3 + 1] = 0.3; colors[i * 3 + 2] = 0.75;
+        // Deep purple accent
+        colors[i * 3] = 0.65 + Math.random() * 0.2; colors[i * 3 + 1] = 0.25 + Math.random() * 0.15; colors[i * 3 + 2] = 0.85;
       }
     }
 

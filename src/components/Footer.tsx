@@ -20,7 +20,7 @@ function PulseRings() {
             delay: i * 0.5,
             ease: 'easeOut',
           }}
-          className="absolute rounded-full border border-[#00f3ff]/[0.08]"
+          className="absolute rounded-full border border-[#a78bfa]/[0.08]"
           style={{ width: 80 + i * 70, height: 80 + i * 70 }}
         />
       ))}
@@ -31,10 +31,10 @@ function PulseRings() {
 /* ─── Floating gradient orbs ─── */
 function FloatingOrbs() {
   const orbs = [
-    { size: 120, x: '10%', y: '15%', dur: 7, color: '#00f3ff' },
-    { size: 80, x: '85%', y: '25%', dur: 9, color: '#38bdf8' },
-    { size: 100, x: '70%', y: '75%', dur: 11, color: '#818cf8' },
-    { size: 60, x: '20%', y: '80%', dur: 8, color: '#00f3ff' },
+    { size: 120, x: '10%', y: '15%', dur: 7, color: '#a78bfa' },
+    { size: 80, x: '85%', y: '25%', dur: 9, color: '#818cf8' },
+    { size: 100, x: '70%', y: '75%', dur: 11, color: '#c4b5fd' },
+    { size: 60, x: '20%', y: '80%', dur: 8, color: '#a78bfa' },
   ];
 
   return (
@@ -92,13 +92,13 @@ function Sparkles() {
             delay: p.delay,
             ease: 'easeInOut',
           }}
-          className="absolute rounded-full bg-[#00f3ff] pointer-events-none"
+          className="absolute rounded-full bg-[#a78bfa] pointer-events-none"
           style={{
             width: p.size,
             height: p.size,
             left: p.x,
             top: p.y,
-            boxShadow: `0 0 ${p.size * 3}px ${p.size}px rgba(0,243,255,0.15)`,
+            boxShadow: `0 0 ${p.size * 3}px ${p.size}px rgba(167,139,250,0.15)`,
           }}
         />
       ))}
@@ -165,7 +165,7 @@ export default function Footer() {
             transition={{ repeat: Infinity, duration: 10, ease: 'linear' }}
             className="absolute inset-[-80%]"
             style={{
-              background: 'conic-gradient(from 0deg, transparent 20%, rgba(0,243,255,0.15) 30%, transparent 40%, rgba(129,140,248,0.1) 55%, transparent 65%, rgba(56,189,248,0.12) 80%, transparent 90%)',
+              background: 'conic-gradient(from 0deg, transparent 20%, rgba(167,139,250,0.15) 30%, transparent 40%, rgba(129,140,248,0.1) 55%, transparent 65%, rgba(196,181,253,0.12) 80%, transparent 90%)',
             }}
           />
 
@@ -176,7 +176,7 @@ export default function Footer() {
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                  background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, rgba(0,243,255,0.04), transparent 50%)`,
+                  background: `radial-gradient(500px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.04), transparent 50%)`,
                 }}
               />
             )}
@@ -198,7 +198,7 @@ export default function Footer() {
                 <motion.span
                   animate={{ scale: [1, 1.3, 1] }}
                   transition={{ repeat: Infinity, duration: 2 }}
-                  className="w-1.5 h-1.5 rounded-full bg-[#00f3ff]/40"
+                  className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/40"
                 />
                 <span className="font-mono text-[9px] sm:text-[10px] text-white/25 tracking-[0.15em] uppercase">No credit card required</span>
               </motion.div>
@@ -230,7 +230,7 @@ export default function Footer() {
                 No sign-up required. Just start chatting and see if you can tell the difference.
               </motion.p>
 
-              {/* Magnetic CTA button */}
+              {/* Magnetic CTA button — Glossy */}
               <motion.div
                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                 animate={isCtaInView ? { opacity: 1, y: 0, scale: 1 } : {}}
@@ -251,7 +251,7 @@ export default function Footer() {
                 >
                   <a
                     href="#agents"
-                    className="group relative inline-flex items-center gap-2.5 px-8 sm:px-10 py-4 sm:py-5 bg-[#00f3ff] text-black font-heading font-bold rounded-full text-sm sm:text-base overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,243,255,0.4)]"
+                    className="btn-glossy group relative inline-flex items-center gap-2.5 px-8 sm:px-10 py-4 sm:py-5 font-heading font-bold rounded-full text-sm sm:text-base overflow-hidden"
                   >
                     <span className="relative z-10 flex items-center gap-2">
                       Try It Now — Free
@@ -276,7 +276,7 @@ export default function Footer() {
                   { icon: '⏣', text: 'End-to-end encrypted' },
                 ].map((item) => (
                   <div key={item.text} className="flex items-center gap-1.5">
-                    <span className="text-[#00f3ff]/25 text-[10px]">{item.icon}</span>
+                    <span className="text-[#a78bfa]/25 text-[10px]">{item.icon}</span>
                     <span className="font-mono text-[9px] sm:text-[10px] text-white/15 tracking-wider">{item.text}</span>
                   </div>
                 ))}
@@ -288,13 +288,12 @@ export default function Footer() {
         {/* ── Footer bottom ── */}
         <div className="border-t border-white/[0.04] pt-8 sm:pt-10">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 items-start">
-            {/* Brand */}
+            {/* Brand — text-only logo */}
             <div className="col-span-2 md:col-span-1">
-              <motion.div whileHover={{ scale: 1.03 }} className="flex items-center gap-2.5 mb-3 cursor-default">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00f3ff] to-[#0284c7] flex items-center justify-center text-black font-bold text-xs">L</div>
-                <span className="font-heading font-bold text-base tracking-tight">
-                  LLa<span className="text-[#00f3ff]">chat</span>
-                  <span className="text-white/15 ml-1 text-[9px] font-mono">AI</span>
+              <motion.div whileHover={{ scale: 1.03 }} className="flex items-center gap-1 mb-3 cursor-default">
+                <span className="font-display font-bold text-base tracking-tight">
+                  LLa<span className="text-gradient">chat</span>
+                  <span className="text-white/15 ml-1.5 text-[9px] font-mono tracking-widest align-super">AI</span>
                 </span>
               </motion.div>
               <p className="text-[11px] text-white/12 leading-relaxed max-w-[220px]">
@@ -309,7 +308,7 @@ export default function Footer() {
                 <div className="space-y-2">
                   {['Features', 'Agents', 'How It Works'].map((l) => (
                     <motion.div key={l} whileHover={{ x: 3 }}>
-                      <a href={`#${l.toLowerCase().replace(/ /g, '-')}`} className="block text-[11px] sm:text-xs text-white/18 hover:text-[#00f3ff]/40 transition-colors duration-300">{l}</a>
+                      <a href={`#${l.toLowerCase().replace(/ /g, '-')}`} className="block text-[11px] sm:text-xs text-white/18 hover:text-[#a78bfa]/40 transition-colors duration-300">{l}</a>
                     </motion.div>
                   ))}
                 </div>
@@ -319,7 +318,7 @@ export default function Footer() {
                 <div className="space-y-2">
                   {['About', 'Privacy', 'Contact'].map((l) => (
                     <motion.div key={l} whileHover={{ x: 3 }}>
-                      <a href="#" className="block text-[11px] sm:text-xs text-white/18 hover:text-[#00f3ff]/40 transition-colors duration-300">{l}</a>
+                      <a href="#" className="block text-[11px] sm:text-xs text-white/18 hover:text-[#a78bfa]/40 transition-colors duration-300">{l}</a>
                     </motion.div>
                   ))}
                 </div>

@@ -7,12 +7,12 @@ interface Props {
   shapeName: string;
 }
 
-/* ─── Word with gradient color + hover ─── */
+/* ─── Word with glow wave animation ─── */
 const WORDS = [
-  { text: 'AI', color: '#00f3ff', glow: '0,243,255' },
-  { text: 'That', color: '#38bdf8', glow: '56,189,248' },
-  { text: 'Feels', color: '#818cf8', glow: '129,140,248' },
-  { text: 'Human.', color: '#c084fc', glow: '192,132,252' },
+  { text: 'AI', accent: false },
+  { text: 'That', accent: false },
+  { text: 'Feels', accent: false },
+  { text: 'Human.', accent: true },
 ];
 
 function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }) {
@@ -28,16 +28,44 @@ function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }
       whileHover={{
         y: -10,
         scale: 1.06,
-        textShadow: `0 0 50px rgba(${word.glow},0.5), 0 0 100px rgba(${word.glow},0.25), 0 4px 20px rgba(0,0,0,0.3)`,
+        textShadow: word.accent
+          ? '0 0 50px rgba(167,139,250,0.5), 0 0 100px rgba(167,139,250,0.25), 0 4px 20px rgba(0,0,0,0.3)'
+          : '0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(167,139,250,0.1), 0 4px 20px rgba(0,0,0,0.3)',
         transition: { type: 'spring', stiffness: 300, damping: 15 },
       }}
       className="inline-block mr-[0.22em] last:mr-0 cursor-default"
       style={{
-        color: word.color,
-        textShadow: `0 0 30px rgba(${word.glow},0.15)`,
+        color: word.accent ? '#c4b5fd' : '#f1f5f9',
+        textShadow: word.accent
+          ? '0 0 30px rgba(167,139,250,0.15)'
+          : '0 0 20px rgba(255,255,255,0.03)',
       }}
     >
-      {word.text}
+      {/* Glow wave animation */}
+      <motion.span
+        animate={{
+          textShadow: word.accent
+            ? [
+                '0 0 20px rgba(167,139,250,0.1)',
+                '0 0 60px rgba(167,139,250,0.35), 0 0 120px rgba(167,139,250,0.15)',
+                '0 0 20px rgba(167,139,250,0.1)',
+              ]
+            : [
+                '0 0 10px rgba(255,255,255,0.0)',
+                '0 0 40px rgba(167,139,250,0.2), 0 0 80px rgba(167,139,250,0.08)',
+                '0 0 10px rgba(255,255,255,0.0)',
+              ],
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 3.5,
+          delay: 1.5 + index * 0.6,
+          ease: 'easeInOut',
+        }}
+        className="inline-block"
+      >
+        {word.text}
+      </motion.span>
     </motion.span>
   );
 }
@@ -58,10 +86,10 @@ function ShimmerBadge() {
       />
       <div className="relative flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 bg-white/[0.04] border border-white/[0.08] rounded-full backdrop-blur-sm">
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inset-0 rounded-full bg-[#00f3ff] opacity-50" />
-          <span className="relative rounded-full h-2 w-2 bg-[#00f3ff]" />
+          <span className="animate-ping absolute inset-0 rounded-full bg-[#a78bfa] opacity-50" />
+          <span className="relative rounded-full h-2 w-2 bg-[#a78bfa]" />
         </span>
-        <span className="font-mono text-[10px] sm:text-[11px] text-[#00f3ff]/50 tracking-[0.12em] uppercase">
+        <span className="font-mono text-[10px] sm:text-[11px] text-[#a78bfa]/50 tracking-[0.12em] uppercase">
           Neural Trust Engine v3.2
         </span>
       </div>
@@ -116,7 +144,7 @@ export default function Hero({ shapeName }: Props) {
       {/* Badge */}
       <ShimmerBadge />
 
-      {/* Title — word-by-word gradient */}
+      {/* Title — unified white with accent + glow wave */}
       <h1 className="relative font-display font-bold text-center leading-[0.88] tracking-[-0.045em] select-none text-[2.6rem] sm:text-[4.2rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] 2xl:text-[10.5rem]">
         {WORDS.map((w, i) => (
           <HeroWord key={w.text} word={w} index={i} />
@@ -129,14 +157,14 @@ export default function Hero({ shapeName }: Props) {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.6 }}
-        className="mt-5 sm:mt-7 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-[#00f3ff]/20 transition-all duration-500 group cursor-pointer"
+        className="mt-5 sm:mt-7 flex items-center gap-2.5 px-4 py-2 rounded-full border border-white/[0.06] bg-white/[0.02] backdrop-blur-sm hover:border-[#a78bfa]/20 transition-all duration-500 group cursor-pointer"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.92 }}
       >
         <motion.span
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-          className="text-[#00f3ff]/35 text-xs"
+          className="text-[#a78bfa]/35 text-xs"
         >
           ◈
         </motion.span>
@@ -164,7 +192,7 @@ export default function Hero({ shapeName }: Props) {
         <span className="text-white/35">your customers won&apos;t know the difference.</span>
       </motion.p>
 
-      {/* CTAs */}
+      {/* CTAs — Glossy buttons */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
@@ -182,7 +210,7 @@ export default function Hero({ shapeName }: Props) {
         >
           <a
             href="#agents"
-            className="group relative inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 bg-[#00f3ff] text-black font-heading font-bold rounded-full text-sm sm:text-[15px] overflow-hidden transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,243,255,0.35)]"
+            className="btn-glossy group relative inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 font-heading font-bold rounded-full text-sm sm:text-[15px] overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2">
               Meet Our Agents
@@ -202,7 +230,7 @@ export default function Hero({ shapeName }: Props) {
         >
           <a
             href="#about"
-            className="inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm text-white/30 border border-white/[0.08] hover:text-white/55 hover:border-white/[0.15] hover:shadow-[0_0_30px_rgba(255,255,255,0.03)] transition-all duration-500 font-medium"
+            className="btn-glass inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm text-white/40 font-medium"
           >
             Learn More
           </a>
@@ -229,7 +257,7 @@ export default function Hero({ shapeName }: Props) {
             transition={{ delay: 2.3 + i * 0.1 }}
             className="flex items-center gap-1.5 group cursor-default"
           >
-            <span className="text-[#00f3ff]/20 text-[10px] group-hover:text-[#00f3ff]/45 transition-colors">{t.icon}</span>
+            <span className="text-[#a78bfa]/20 text-[10px] group-hover:text-[#a78bfa]/45 transition-colors">{t.icon}</span>
             <span className="font-mono text-[9px] sm:text-[10px] text-white/[0.12] group-hover:text-white/25 transition-colors tracking-wider">{t.label}</span>
           </motion.div>
         ))}
@@ -252,7 +280,7 @@ export default function Hero({ shapeName }: Props) {
             <motion.div
               animate={{ opacity: [0.5, 0.1, 0.5], y: [0, 8, 0] }}
               transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-              className="w-[2px] h-[6px] bg-[#00f3ff]/15 rounded-full"
+              className="w-[2px] h-[6px] bg-[#a78bfa]/15 rounded-full"
             />
           </div>
         </motion.div>

@@ -36,18 +36,11 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-2.5 group">
-            <motion.div
-              whileHover={{ rotate: 8, scale: 1.08 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-              className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#00f3ff] to-[#0284c7] flex items-center justify-center text-black font-bold text-sm"
-            >
-              L
-            </motion.div>
-            <span className="font-heading font-bold text-lg tracking-tight">
-              LLa<span className="text-[#00f3ff]">chat</span>
-              <span className="text-white/15 ml-1 text-[9px] font-mono tracking-widest">AI</span>
+          {/* Logo — text only */}
+          <a href="#" className="flex items-center gap-1 group">
+            <span className="font-display font-bold text-xl tracking-tight">
+              LLa<span className="text-gradient">chat</span>
+              <span className="text-white/15 ml-1.5 text-[9px] font-mono tracking-widest align-super">AI</span>
             </span>
           </a>
 
@@ -62,7 +55,7 @@ export default function Navbar() {
               >
                 <a href={l.href} className="relative px-3.5 py-2 text-white/35 hover:text-white/80 text-[13px] font-medium transition-colors duration-300 group">
                   {l.label}
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#00f3ff] transition-all duration-300 group-hover:w-2/3 rounded-full" />
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#a78bfa] transition-all duration-300 group-hover:w-2/3 rounded-full" />
                 </a>
               </motion.div>
             ))}
@@ -71,7 +64,7 @@ export default function Navbar() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 }}
             >
-              <a href="#agents" className="ml-3 px-5 py-2 rounded-full text-[13px] font-bold text-black bg-[#00f3ff] hover:shadow-[0_0_20px_rgba(0,243,255,0.25)] transition-all duration-300 font-heading">
+              <a href="#agents" className="ml-3 px-5 py-2 rounded-full text-[13px] font-bold text-white btn-glossy font-heading">
                 Try Now
               </a>
             </motion.div>
@@ -117,7 +110,7 @@ export default function Navbar() {
               transition={{ delay: 0.35 }}
               className="mt-8"
             >
-              <a href="#agents" onClick={() => setOpen(false)} className="px-8 py-3.5 rounded-full text-base font-heading font-bold text-black bg-[#00f3ff]">
+              <a href="#agents" onClick={() => setOpen(false)} className="px-8 py-3.5 rounded-full text-base font-heading font-bold text-white btn-glossy">
                 Try Now
               </a>
             </motion.div>
