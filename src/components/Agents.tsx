@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import Image from 'next/image';
+import { useGyroscope } from '@/lib/useGyroscope';
 
 const agents = [
   {
@@ -36,7 +37,9 @@ const agents = [
   },
 ];
 
-function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number }) {
+interface GyroTilt { x: number; y: number; }
+
+function AgentCard({ agent, index, tilt }: { agent: typeof agents[0]; index: number; tilt: GyroTilt }) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-40px' });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -48,6 +51,10 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
       initial={{ opacity: 0, y: 60, filter: 'blur(8px)' }}
       animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
       transition={{ duration: 0.8, delay: index * 0.2, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x * 8}deg) rotateY(${tilt.y * 8}deg)`,
+        transition: 'transform 0.3s ease-out',
+      }}
       onMouseMove={(e) => {
         const rect = ref.current?.getBoundingClientRect();
         if (!rect) return;
@@ -55,32 +62,27 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
         setHovering(true);
       }}
       onMouseLeave={() => setHovering(false)}
-      className="group relative rounded-2xl sm:rounded-3xl bg-white/[0.02] border border-white/[0.06] overflow-hidden transition-colors duration-700 hover:border-white/[0.1]"
+      className="group relative rounded-2xl sm:rounded-3xl card-liquid-glass overflow-hidden"
     >
       {/* Spotlight glow following cursor */}
       {hovering && (
         <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-300 rounded-[inherit]"
+          className="absolute inset-0 pointer-events-none transition-opacity duration-300 rounded-[inherit] z-10"
           style={{
-            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.06), transparent 60%)`,
+            background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.08), transparent 60%)`,
           }}
         />
       )}
 
-      {/* Top highlight line */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/0 to-transparent group-hover:via-[#a78bfa]/15 transition-all duration-700" />
-
       <div className="relative z-10 p-5 sm:p-6 md:p-8">
         {/* Header */}
         <div className="flex items-start gap-4 sm:gap-5 mb-5">
-          {/* Circular photo */}
           <motion.div
             whileHover={{ scale: 1.08 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-[#a78bfa]/15 ring-offset-2 ring-offset-[#050505]"
           >
             <Image src={agent.photo} alt={agent.name} fill className="object-cover" sizes="80px" />
-            {/* Online dot */}
             <div className="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-400 border-2 border-[#0a0a0a]">
               <span className="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-30" />
             </div>
@@ -103,7 +105,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
               initial={{ opacity: 0, y: 10 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.6 + i * 0.05 }}
-              className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] bg-white/[0.03] text-white/25 border border-white/[0.05] hover:border-[#a78bfa]/15 hover:text-[#a78bfa]/50 transition-all duration-300 cursor-default"
+              className="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] bg-white/[0.03] text-white/25 border border-white/[0.05] hover:border-[#a78bfa]/15 hover:text-[#a78bfa]/50 transition-all duration-300 cursor-default backdrop-blur-sm"
             >
               {s}
             </motion.span>
@@ -111,7 +113,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
         </div>
 
         {/* Chat preview */}
-        <div className="rounded-xl bg-black/20 border border-white/[0.04] p-3 sm:p-4 mb-5">
+        <div className="rounded-xl bg-black/30 border border-white/[0.04] p-3 sm:p-4 mb-5 backdrop-blur-sm">
           <div className="flex items-center gap-2 mb-3">
             <span className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/20 animate-pulse" />
             <span className="font-mono text-[8px] sm:text-[9px] text-white/10 tracking-[0.2em] uppercase">Live Preview</span>
@@ -134,7 +136,6 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
                 </div>
               </motion.div>
             ))}
-            {/* Typing */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={isInView ? { opacity: 1 } : {}}
@@ -148,7 +149,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
           </div>
         </div>
 
-        {/* WhatsApp CTA — Glossy style */}
+        {/* WhatsApp CTA — Glossy */}
         <motion.div
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
@@ -158,7 +159,7 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
             href={`https://wa.me/${agent.number}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-glossy group/btn relative flex items-center justify-center gap-2 w-full py-3.5 sm:py-4 font-heading font-semibold text-xs sm:text-sm overflow-hidden"
+            className="btn-glossy group/btn relative flex items-center justify-center gap-2 w-full py-3.5 sm:py-4 font-heading font-semibold text-xs sm:text-sm overflow-hidden rounded-xl sm:rounded-2xl"
           >
             <MessageCircle className="w-4 h-4" />
             Chat with {agent.name}
@@ -172,10 +173,11 @@ function AgentCard({ agent, index }: { agent: typeof agents[0]; index: number })
 }
 
 export default function Agents() {
+  const tilt = useGyroscope();
+
   return (
     <section id="agents" className="relative z-10 py-16 sm:py-24 md:py-32 px-5 sm:px-8">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
           <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">001</span>
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
@@ -203,7 +205,7 @@ export default function Agents() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
           {agents.map((a, i) => (
-            <AgentCard key={a.name} agent={a} index={i} />
+            <AgentCard key={a.name} agent={a} index={i} tilt={tilt} />
           ))}
         </div>
       </div>

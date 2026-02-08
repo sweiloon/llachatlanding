@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useGyroscope } from '@/lib/useGyroscope';
 
 const stats = [
   { value: '97', suffix: '%', label: 'Human-likeness', desc: 'Blind tester score' },
@@ -10,20 +11,18 @@ const stats = [
   { value: '24', suffix: '/7', label: 'Availability', desc: 'Never sleeps' },
 ];
 
-// Animated counter hook
 function useCounter(target: number, isInView: boolean, duration = 1500) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!isInView) return;
-    let start = 0;
     const startTime = Date.now();
     const isFloat = target % 1 !== 0;
     const timer = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      start = target * eased;
-      setCount(isFloat ? parseFloat(start.toFixed(1)) : Math.round(start));
+      const val = target * eased;
+      setCount(isFloat ? parseFloat(val.toFixed(1)) : Math.round(val));
       if (progress >= 1) clearInterval(timer);
     }, 16);
     return () => clearInterval(timer);
@@ -31,7 +30,9 @@ function useCounter(target: number, isInView: boolean, duration = 1500) {
   return count;
 }
 
-function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
+interface GyroTilt { x: number; y: number; }
+
+function StatCard({ stat, index, tilt }: { stat: typeof stats[0]; index: number; tilt: GyroTilt }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-20px' });
   const count = useCounter(parseFloat(stat.value), isInView);
@@ -44,20 +45,24 @@ function StatCard({ stat, index }: { stat: typeof stats[0]; index: number }) {
       initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }}
       animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x * 6}deg) rotateY(${tilt.y * 6}deg)`,
+        transition: 'transform 0.3s ease-out',
+      }}
       onMouseMove={(e) => {
         const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
         setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
         setHovering(true);
       }}
       onMouseLeave={() => setHovering(false)}
-      className="relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl bg-white/[0.02] border border-white/[0.05] overflow-hidden cursor-default group transition-colors duration-500 hover:border-white/[0.08]"
+      className="relative p-4 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl card-liquid-glass overflow-hidden cursor-default group"
     >
       {/* Spotlight */}
       {hovering && (
         <div
-          className="absolute inset-0 pointer-events-none rounded-[inherit]"
+          className="absolute inset-0 pointer-events-none rounded-[inherit] z-10"
           style={{
-            background: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.05), transparent 60%)`,
+            background: `radial-gradient(200px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.07), transparent 60%)`,
           }}
         />
       )}
@@ -91,13 +96,13 @@ const ASCII_ART = `
 export default function About() {
   const asciiRef = useRef(null);
   const isAsciiInView = useInView(asciiRef, { once: true });
+  const tilt = useGyroscope();
 
   return (
     <section id="about" className="relative z-10 py-16 sm:py-24 md:py-32 px-5 sm:px-8">
       <div className="section-line max-w-6xl mx-auto mb-16 sm:mb-24" />
 
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
           <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">002</span>
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
@@ -135,7 +140,7 @@ export default function About() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="my-6 p-4 sm:p-5 rounded-xl bg-white/[0.02] border-l-2 border-[#a78bfa]/20"
+                className="my-6 p-4 sm:p-5 rounded-xl card-liquid-glass !border-l-2 !border-l-[#a78bfa]/20"
               >
                 <p className="text-white/45 text-xs sm:text-sm italic">
                   &ldquo;Our engine doesn&apos;t generate responses — it{' '}
@@ -147,7 +152,6 @@ export default function About() {
             </motion.div>
           </div>
 
-          {/* ASCII art — char reveal */}
           <motion.div ref={asciiRef} className="hidden md:flex justify-center items-center">
             <pre className="text-[9px] lg:text-[10px] font-mono leading-relaxed select-none">
               {ASCII_ART.split('').map((ch, i) => (
@@ -165,10 +169,9 @@ export default function About() {
           </motion.div>
         </div>
 
-        {/* Stats with counter animation */}
         <div className="mt-12 sm:mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((s, i) => (
-            <StatCard key={s.label} stat={s} index={i} />
+            <StatCard key={s.label} stat={s} index={i} tilt={tilt} />
           ))}
         </div>
       </div>

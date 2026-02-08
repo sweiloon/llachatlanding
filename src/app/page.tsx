@@ -33,11 +33,18 @@ export default function Home() {
       {/* 3D Particle Background */}
       <ParticleUniverse onShapeChange={handleShapeChange} audioEnabled={false} />
 
-      {/* Vignette — balanced: center slightly dark for text, mid clear for particles */}
+      {/* Nebula aurora layer — animated gradient orbs behind particles */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div className="nebula-orb-1 absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.06)_0%,transparent_70%)] blur-[80px]" />
+        <div className="nebula-orb-2 absolute top-[40%] right-[10%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.05)_0%,transparent_70%)] blur-[100px]" />
+        <div className="nebula-orb-3 absolute bottom-[15%] left-[30%] w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(196,181,253,0.04)_0%,transparent_65%)] blur-[90px]" />
+      </div>
+
+      {/* Vignette */}
       <div className="fixed inset-0 z-[1] pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,5,5,0.25)_0%,rgba(5,5,5,0.03)_45%,rgba(5,5,5,0.4)_100%)]" />
-        <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-[#050505]/50 to-transparent" />
-        <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-[#050505]/50 to-transparent" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(5,5,5,0.2)_0%,rgba(5,5,5,0.02)_45%,rgba(5,5,5,0.35)_100%)]" />
+        <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-[#050505]/40 to-transparent" />
+        <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-[#050505]/40 to-transparent" />
       </div>
 
       {/* Nav */}

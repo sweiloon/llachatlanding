@@ -7,7 +7,7 @@ import { SHAPES } from '@/lib/shapes';
 const MORPH_SPEED = 1.8;
 const HOLD_TIME = 5;
 
-/* ─── Vertex Shader: rhythmic beats + mouse repulsion + twinkle ─── */
+/* ─── Vertex Shader: vortex swirl + turbulence + mouse attraction ring ─── */
 const VERT = `
 attribute float aSize;
 attribute vec3 aColor;
@@ -20,51 +20,90 @@ uniform float uMouseActive;
 varying vec3 vCol;
 varying float vAlpha;
 
+// Simple hash noise
+float hash(float n) { return fract(sin(n) * 43758.5453); }
+float noise1d(float x) {
+  float i = floor(x);
+  float f = fract(x);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(hash(i), hash(i + 1.0), f);
+}
+
 void main(){
   vec3 col = aColor;
   vec3 pos = position;
+  float r = aRand;
 
-  // Simulated rhythmic beats (as if reacting to music)
+  // ── Rhythmic beats (multi-freq simulated music) ──
   float beat1 = pow(max(sin(uTime * 3.14159), 0.0), 14.0);
   float beat2 = pow(max(sin(uTime * 1.5708), 0.0), 10.0);
-  float pulse = beat1 * 0.1 + beat2 * 0.05;
+  float beat3 = pow(max(sin(uTime * 2.35619), 0.0), 20.0);
+  float pulse = beat1 * 0.12 + beat2 * 0.06 + beat3 * 0.03;
 
-  // Organic floating + beat expansion
-  float r = aRand;
-  pos.x += sin(uTime * 0.5 + r * 6.28) * 0.22;
-  pos.y += cos(uTime * 0.35 + r * 3.14) * 0.18;
-  pos.z += sin(uTime * 0.4 + r * 4.5) * 0.15;
+  // ── Vortex swirl — particles orbit center ──
+  float dist = length(pos.xz);
+  float angle = atan(pos.z, pos.x);
+  float swirlSpeed = 0.25 / max(dist, 0.5);
+  angle += uTime * swirlSpeed * (0.4 + r * 0.6);
+  pos.x = cos(angle) * dist;
+  pos.z = sin(angle) * dist;
+
+  // ── Organic floating + beat expansion ──
+  float t1 = uTime * 0.5 + r * 6.28;
+  float t2 = uTime * 0.35 + r * 3.14;
+  pos.x += sin(t1) * 0.18;
+  pos.y += cos(t2) * 0.22 + sin(uTime * 0.8 + r * 5.0) * 0.08;
+  pos.z += sin(uTime * 0.4 + r * 4.5) * 0.12;
   pos *= 1.0 + pulse;
 
-  // Mouse repulsion
+  // ── Turbulence — organic noise displacement ──
+  float turb = noise1d(r * 100.0 + uTime * 0.4) * 0.25;
+  pos.x += sin(uTime * 0.7 + r * 12.0) * turb;
+  pos.y += cos(uTime * 0.5 + r * 8.0) * turb * 0.6;
+  pos.z += sin(uTime * 0.6 + r * 10.0) * turb;
+
+  // ── Mouse interaction: attraction ring + repulsion core ──
   vec3 toMouse = pos - uMouse3D;
   float mouseDist = length(toMouse);
-  float repulseRadius = 5.5;
-  if(mouseDist < repulseRadius && uMouseActive > 0.5) {
-    float force = 1.0 - mouseDist / repulseRadius;
-    force = force * force * 3.5;
-    pos += normalize(toMouse + vec3(0.001)) * force;
-    col = mix(col, vec3(0.85, 0.75, 1.0), force * 0.3);
+  if(uMouseActive > 0.5) {
+    float attractRadius = 8.0;
+    float repulseRadius = 3.0;
+    if(mouseDist < attractRadius && mouseDist > repulseRadius) {
+      float attractForce = 1.0 - (mouseDist - repulseRadius) / (attractRadius - repulseRadius);
+      attractForce = attractForce * attractForce * 0.7;
+      vec3 tangent = normalize(cross(toMouse, vec3(0.0, 1.0, 0.0)));
+      pos += tangent * attractForce * 2.5;
+      col = mix(col, vec3(0.9, 0.8, 1.0), attractForce * 0.2);
+    } else if(mouseDist < repulseRadius) {
+      float force = 1.0 - mouseDist / repulseRadius;
+      force = force * force * 5.0;
+      pos += normalize(toMouse + vec3(0.001)) * force;
+      col = mix(col, vec3(1.0, 0.95, 1.0), force * 0.4);
+    }
   }
 
-  // Twinkle + beat glow
+  // ── Aurora color wave ──
+  float colorWave = sin(pos.x * 0.25 + pos.y * 0.15 + uTime * 0.4) * 0.5 + 0.5;
+  col = mix(col, col * vec3(1.0 + colorWave * 0.12, 1.0 - colorWave * 0.04, 1.0 + colorWave * 0.08), 0.35);
+
+  // ── Twinkle + beat glow ──
   float twinkle = pow(max(sin(uTime * 2.5 + r * 789.0), 0.0), 25.0);
   float shimmer = sin(uTime * 3.0 + r * 123.0) * 0.5 + 0.5;
-  vAlpha = aAlpha * (0.7 + shimmer * 0.2 + twinkle * 1.0 + beat1 * 0.25);
-  vCol = col + vec3(twinkle * 0.3 + beat1 * 0.08);
+  vAlpha = aAlpha * (0.7 + shimmer * 0.25 + twinkle * 1.2 + beat1 * 0.3 + beat3 * 0.15);
+  vCol = col + vec3(twinkle * 0.35 + beat1 * 0.1);
 
   vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-  float sizeMod = 1.0 + twinkle * 1.2 + beat1 * 0.4;
+  float sizeMod = 1.0 + twinkle * 1.5 + beat1 * 0.5;
 
   // Depth fade
   float depth = clamp((-mv.z - 18.0) / 35.0, 0.0, 1.0);
-  vAlpha *= 1.0 - depth * 0.35;
+  vAlpha *= 1.0 - depth * 0.3;
 
-  gl_PointSize = aSize * sizeMod * uDpr * (150.0 / -mv.z);
+  gl_PointSize = aSize * sizeMod * uDpr * (160.0 / -mv.z);
   gl_Position = projectionMatrix * mv;
 }`;
 
-/* ─── Fragment Shader: balanced glow ─── */
+/* ─── Fragment Shader: soft bloom with layered glow ─── */
 const FRAG = `
 varying vec3 vCol;
 varying float vAlpha;
@@ -73,10 +112,13 @@ void main(){
   float d = length(gl_PointCoord - vec2(0.5));
   if(d > 0.5) discard;
 
-  float core = exp(-d * 14.0);
-  float glow = exp(-d * 4.5) * 0.3;
-  vec3 col = vCol * (core + glow) + vec3(1.0) * core * 0.2;
-  float alpha = vAlpha * (core + glow);
+  float core = exp(-d * 12.0);
+  float mid  = exp(-d * 5.0) * 0.35;
+  float outer = exp(-d * 2.5) * 0.08;
+  float intensity = core + mid + outer;
+
+  vec3 col = vCol * intensity + vec3(1.0) * core * 0.25;
+  float alpha = vAlpha * intensity;
 
   gl_FragColor = vec4(col, alpha);
 }`;
@@ -149,26 +191,21 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
 
     for (let i = 0; i < count; i++) {
       const isStar = Math.random() < 0.12;
-      sizes[i] = isStar ? (1.6 + Math.random() * 1.8) : (0.5 + Math.random() * 1.0);
-      alphas[i] = isStar ? (0.2 + Math.random() * 0.35) : (0.06 + Math.random() * 0.14);
+      sizes[i] = isStar ? (1.8 + Math.random() * 2.0) : (0.5 + Math.random() * 1.1);
+      alphas[i] = isStar ? (0.25 + Math.random() * 0.4) : (0.07 + Math.random() * 0.16);
       rands[i] = Math.random();
 
       // Violet / indigo / purple palette
       const t = Math.random();
       if (t < 0.35) {
-        // Soft violet
         colors[i * 3] = 0.55 + Math.random() * 0.15; colors[i * 3 + 1] = 0.4 + Math.random() * 0.2; colors[i * 3 + 2] = 0.95;
       } else if (t < 0.55) {
-        // Indigo
         colors[i * 3] = 0.4 + Math.random() * 0.15; colors[i * 3 + 1] = 0.45 + Math.random() * 0.15; colors[i * 3 + 2] = 0.92;
       } else if (t < 0.72) {
-        // Lavender
         colors[i * 3] = 0.7 + Math.random() * 0.1; colors[i * 3 + 1] = 0.6 + Math.random() * 0.15; colors[i * 3 + 2] = 0.95;
       } else if (t < 0.88) {
-        // Pale white-violet
         colors[i * 3] = 0.85; colors[i * 3 + 1] = 0.82; colors[i * 3 + 2] = 0.97;
       } else {
-        // Deep purple accent
         colors[i * 3] = 0.65 + Math.random() * 0.2; colors[i * 3 + 1] = 0.25 + Math.random() * 0.15; colors[i * 3 + 2] = 0.85;
       }
     }
@@ -282,15 +319,16 @@ export default function ParticleUniverse({ onShapeChange }: Props) {
       mat.uniforms.uTime.value = t;
       mat.uniforms.uMouseActive.value = s.mouseActive ? 1.0 : 0.0;
 
-      // Camera follows mouse
-      cam.position.x += (s.mouse.x * 3 - cam.position.x) * 0.02;
-      cam.position.y += (s.mouse.y * 2 - cam.position.y) * 0.02;
+      // Dynamic camera — follows mouse with more movement
+      cam.position.x += (s.mouse.x * 4 - cam.position.x) * 0.025;
+      cam.position.y += (s.mouse.y * 3 - cam.position.y) * 0.025;
       cam.position.z = 32;
       cam.lookAt(0, 0, 0);
 
-      pts.rotation.y += 0.0015;
-      pts.rotation.x = Math.sin(t * 0.12) * 0.08;
-      pts.rotation.z = Math.cos(t * 0.08) * 0.04;
+      // More dramatic rotation
+      pts.rotation.y += 0.002;
+      pts.rotation.x = Math.sin(t * 0.15) * 0.1;
+      pts.rotation.z = Math.cos(t * 0.1) * 0.06;
 
       renderer.render(scene, cam);
     };
