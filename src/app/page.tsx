@@ -36,8 +36,8 @@ export default function Home() {
         {/* 3D Particle Background */}
         <ParticleUniverse onShapeChange={handleShapeChange} audioEnabled={false} />
 
-        {/* Nebula aurora layer — animated gradient orbs behind particles */}
-        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Nebula aurora layer — hidden on mobile for performance */}
+        <div className="hidden sm:block fixed inset-0 z-0 pointer-events-none overflow-hidden">
           <div className="nebula-orb-1 absolute top-[10%] left-[15%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.06)_0%,transparent_70%)] blur-[80px]" />
           <div className="nebula-orb-2 absolute top-[40%] right-[10%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(129,140,248,0.05)_0%,transparent_70%)] blur-[100px]" />
           <div className="nebula-orb-3 absolute bottom-[15%] left-[30%] w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(196,181,253,0.04)_0%,transparent_65%)] blur-[90px]" />

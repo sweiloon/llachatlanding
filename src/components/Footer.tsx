@@ -144,9 +144,12 @@ export default function Footer() {
             )}
 
             <GridPattern />
-            <FloatingOrbs />
-            <PulseRings />
-            <Sparkles />
+            {/* Heavy decorative animations — hidden on mobile for performance */}
+            <div className="hidden sm:block">
+              <FloatingOrbs />
+              <PulseRings />
+              <Sparkles />
+            </div>
 
             <div className="relative z-10 py-14 sm:py-20 md:py-28 px-6 sm:px-10 md:px-16 text-center">
               <motion.div
@@ -232,27 +235,30 @@ export default function Footer() {
 
         {/* Footer bottom */}
         <div className="border-t border-white/[0.04] pt-8 sm:pt-10">
-          <div className="flex flex-col gap-8 md:grid md:grid-cols-3 md:gap-8 items-start">
+          {/* Mobile: centered vertical stack / Desktop: 3-col grid */}
+          <div className="flex flex-col items-center text-center gap-8 md:items-start md:text-left md:grid md:grid-cols-3 md:gap-8">
+            {/* Brand */}
             <div>
-              <motion.div whileHover={{ scale: 1.03 }} className="flex items-center gap-1 mb-3 cursor-default">
+              <div className="flex items-center justify-center md:justify-start gap-1 mb-3 cursor-default">
                 <span className="font-display font-bold text-base tracking-tight">
                   LLa<span className="text-gradient">chat</span>
                   <span className="text-white/15 ml-1.5 text-[9px] font-mono tracking-widest align-super">AI</span>
                 </span>
-              </motion.div>
+              </div>
               <p className="text-[11px] text-white/12 leading-relaxed max-w-[220px]">
                 {t.footer.brandDesc}
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            {/* Links */}
+            <div className="grid grid-cols-2 gap-10 sm:gap-6 w-full max-w-[280px] md:max-w-none">
               <div>
                 <h4 className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/12 mb-3">{t.footer.productLabel}</h4>
                 <div className="space-y-2">
                   {footerLinks.product.map((l) => (
-                    <motion.div key={l.label} whileHover={{ x: 3 }}>
+                    <div key={l.label}>
                       <a href={l.href} className="block text-[11px] sm:text-xs text-white/18 hover:text-[#a78bfa]/40 transition-colors duration-300">{l.label}</a>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -260,39 +266,32 @@ export default function Footer() {
                 <h4 className="font-mono text-[9px] uppercase tracking-[0.2em] text-white/12 mb-3">{t.footer.companyLabel}</h4>
                 <div className="space-y-2">
                   {footerLinks.company.map((l) => (
-                    <motion.div key={l.label} whileHover={{ x: 3 }}>
+                    <div key={l.label}>
                       <a href={l.href} className="block text-[11px] sm:text-xs text-white/18 hover:text-[#a78bfa]/40 transition-colors duration-300">{l.label}</a>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
             </div>
 
+            {/* Status + Copyright */}
             <div className="md:text-right">
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/[0.05] mb-3 cursor-default"
-              >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/[0.05] mb-3 cursor-default">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-mono text-[9px] text-white/20">{t.footer.status}</span>
-              </motion.div>
+              </div>
               <p className="text-[9px] text-white/8">{t.footer.copyright}</p>
             </div>
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mt-8 text-center"
-        >
+        <div className="mt-8 text-center">
           <pre className="text-[5px] sm:text-[6px] text-white/[0.025] font-mono inline-block select-none">
 {`════════════════════════════════════════════════════════════════
    ◈  ${t.footer.signature}  ◈  LLachat AI  ◈
 ════════════════════════════════════════════════════════════════`}
           </pre>
-        </motion.div>
+        </div>
       </div>
     </footer>
   );

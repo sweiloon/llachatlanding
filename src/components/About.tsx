@@ -228,8 +228,10 @@ export default function About() {
       <div className="section-line max-w-6xl mx-auto mb-16 sm:mb-24" />
 
       <div className="max-w-6xl mx-auto relative">
-        {/* Floating particles */}
-        <FloatingParticles />
+        {/* Floating particles — hidden on mobile for performance */}
+        <div className="hidden md:block">
+          <FloatingParticles />
+        </div>
 
         {/* Section number + line */}
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">

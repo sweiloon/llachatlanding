@@ -228,9 +228,10 @@ export default function Features() {
           </div>
         </GradientBorderCard>
 
-        {/* Feature grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-          <GradientBorderCard delay={0.08} tilt={tilt}>
+        {/* Feature grid — 6-col system for symmetric bottom row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-5">
+          {/* Row 1: 3 equal cards */}
+          <GradientBorderCard delay={0.08} className="lg:col-span-2" tilt={tilt}>
             <div className="relative p-5 sm:p-6 md:p-7 h-full">
               <div className="absolute top-4 right-4 font-heading text-[50px] sm:text-[60px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">02</div>
               <div className="relative z-10 h-full flex flex-col">
@@ -244,7 +245,7 @@ export default function Features() {
             </div>
           </GradientBorderCard>
 
-          <GradientBorderCard delay={0.14} tilt={tilt}>
+          <GradientBorderCard delay={0.14} className="lg:col-span-2" tilt={tilt}>
             <div className="relative p-5 sm:p-6 md:p-7 h-full">
               <div className="absolute top-4 right-4 font-heading text-[50px] sm:text-[60px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">03</div>
               <div className="relative z-10 h-full flex flex-col">
@@ -260,7 +261,7 @@ export default function Features() {
             </div>
           </GradientBorderCard>
 
-          <GradientBorderCard delay={0.2} tilt={tilt}>
+          <GradientBorderCard delay={0.2} className="lg:col-span-2" tilt={tilt}>
             <div className="relative p-5 sm:p-6 md:p-7 h-full">
               <div className="absolute top-4 right-4 font-heading text-[50px] sm:text-[60px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">04</div>
               <div className="relative z-10 h-full flex flex-col">
@@ -274,7 +275,8 @@ export default function Features() {
             </div>
           </GradientBorderCard>
 
-          <GradientBorderCard delay={0.26} className="sm:col-span-1 lg:col-span-1" tilt={tilt}>
+          {/* Row 2: 2 equal cards (each 3 of 6 cols) */}
+          <GradientBorderCard delay={0.26} className="lg:col-span-3" tilt={tilt}>
             <div className="relative p-5 sm:p-6 md:p-7 h-full">
               <div className="absolute top-4 right-4 font-heading text-[50px] sm:text-[60px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">05</div>
               <div className="relative z-10 h-full flex flex-col">
@@ -288,21 +290,16 @@ export default function Features() {
             </div>
           </GradientBorderCard>
 
-          <GradientBorderCard delay={0.32} className="sm:col-span-2" tilt={tilt}>
-            <div className="relative p-5 sm:p-6 md:p-7">
+          <GradientBorderCard delay={0.32} className="lg:col-span-3" tilt={tilt}>
+            <div className="relative p-5 sm:p-6 md:p-7 h-full">
               <div className="absolute top-4 right-4 font-heading text-[50px] sm:text-[60px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">06</div>
-              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                <LockPulse />
-                <div className="flex-1">
-                  <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">{t.features.f6Title}</h3>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-white/20 leading-relaxed group-hover:text-white/30 transition-colors duration-500">{t.features.f6Desc}</p>
+              <div className="relative z-10 h-full flex flex-col">
+                <div className="flex items-start justify-between mb-4">
+                  <motion.div animate={{ boxShadow: ['0 0 0px rgba(167,139,250,0)', '0 0 20px rgba(167,139,250,0.15)', '0 0 0px rgba(167,139,250,0)'] }} transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }} className="text-xl text-[#a78bfa]/40">◈</motion.div>
+                  <LockPulse />
                 </div>
-                <pre className="text-[7px] text-[#a78bfa]/[0.04] font-mono leading-tight select-none hidden md:block group-hover:text-[#a78bfa]/[0.08] transition-colors duration-700">
-{`╔═══════════════════╗
-║  ◈ ENCRYPTED ◈   ║
-║  AES-256 / TLS    ║
-╚═══════════════════╝`}
-                </pre>
+                <h3 className="font-heading text-base sm:text-lg font-bold text-white mb-1.5 group-hover:text-[#a78bfa]/80 transition-colors duration-500 tracking-tight">{t.features.f6Title}</h3>
+                <p className="text-[11px] sm:text-xs text-white/20 leading-relaxed flex-1 group-hover:text-white/30 transition-colors duration-500">{t.features.f6Desc}</p>
               </div>
             </div>
           </GradientBorderCard>

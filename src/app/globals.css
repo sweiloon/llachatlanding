@@ -286,3 +286,32 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .nebula-orb-3 {
   animation: nebula-drift-3 18s ease-in-out infinite;
 }
+
+/* ─── Mobile Performance: disable expensive effects ─── */
+@media (max-width: 768px) {
+  .card-liquid-glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    animation: none;
+  }
+  .card-liquid-glass::after {
+    animation: none;
+    display: none;
+  }
+  .btn-glossy {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .btn-glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .nebula-orb-1,
+  .nebula-orb-2,
+  .nebula-orb-3 {
+    animation: none;
+  }
+  .noise::before {
+    display: none;
+  }
+}
