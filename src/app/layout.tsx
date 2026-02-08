@@ -1,28 +1,28 @@
 import type { Metadata } from "next";
-import { Manrope, Inter, Fira_Code, Space_Grotesk } from "next/font/google";
+import { Syne, Bricolage_Grotesque, Outfit, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const manrope = Manrope({
+const bricolage = Bricolage_Grotesque({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const inter = Inter({
+const outfit = Outfit({
   variable: "--font-body",
   subsets: ["latin"],
 });
 
-const firaCode = Fira_Code({
+const jetbrains = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
 });
 
-const spaceGrotesk = Space_Grotesk({
+const syne = Syne({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["700"],
+  weight: ["700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${manrope.variable} ${inter.variable} ${firaCode.variable} ${spaceGrotesk.variable} antialiased bg-[#050505] text-white`}>
+      <body className={`${bricolage.variable} ${outfit.variable} ${jetbrains.variable} ${syne.variable} antialiased bg-[#050505] text-white`}>
         {children}
       </body>
     </html>

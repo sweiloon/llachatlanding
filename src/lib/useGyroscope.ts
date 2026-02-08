@@ -13,8 +13,6 @@ export function useGyroscope(): GyroTilt {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    let active = false;
-
     const handler = (e: DeviceOrientationEvent) => {
       const beta = e.beta ?? 0;
       const gamma = e.gamma ?? 0;
@@ -24,31 +22,27 @@ export function useGyroscope(): GyroTilt {
       });
     };
 
-    const requestPermission = async () => {
-      if (active) return;
-      try {
-        if (typeof (DeviceOrientationEvent as unknown as { requestPermission?: () => Promise<string> }).requestPermission === 'function') {
-          const response = await (DeviceOrientationEvent as unknown as { requestPermission: () => Promise<string> }).requestPermission();
-          if (response === 'granted') {
-            active = true;
-            window.addEventListener('deviceorientation', handler);
-          }
-        } else {
-          active = true;
-          window.addEventListener('deviceorientation', handler);
-        }
-      } catch {
-        /* permission denied */
-      }
+    // Check if iOS requires permission (iOS 13+)
+    const DOE = DeviceOrientationEvent as unknown as {
+      requestPermission?: () => Promise<string>;
     };
+    const needsPermission = typeof DOE.requestPermission === 'function';
 
-    requestPermission();
-    const onTouch = () => { if (!active) requestPermission(); };
-    window.addEventListener('touchstart', onTouch, { once: true });
+    if (!needsPermission) {
+      // Android / desktop — listen directly, no permission needed
+      window.addEventListener('deviceorientation', handler);
+      return () => window.removeEventListener('deviceorientation', handler);
+    }
+
+    // iOS — wait for permission granted via GyroPermissionBanner
+    const onPermitted = () => {
+      window.addEventListener('deviceorientation', handler);
+    };
+    window.addEventListener('gyro:permitted', onPermitted);
 
     return () => {
+      window.removeEventListener('gyro:permitted', onPermitted);
       window.removeEventListener('deviceorientation', handler);
-      window.removeEventListener('touchstart', onTouch);
     };
   }, []);
 

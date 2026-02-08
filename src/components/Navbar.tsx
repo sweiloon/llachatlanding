@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const links = [
-  { label: 'Agents', href: '#agents' },
-  { label: 'About', href: '#about' },
-  { label: 'Features', href: '#features' },
-  { label: 'How It Works', href: '#how' },
-];
+import { useLanguage, Lang } from '@/lib/i18n';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { lang, setLang, t } = useLanguage();
+
+  const links = [
+    { label: t.nav.agents, href: '#agents' },
+    { label: t.nav.about, href: '#about' },
+    { label: t.nav.features, href: '#features' },
+    { label: t.nav.how, href: '#how' },
+  ];
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60);
@@ -24,6 +26,8 @@ export default function Navbar() {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
+
+  const toggleLang = () => setLang(lang === 'en' ? 'zh' : 'en');
 
   return (
     <>
@@ -59,25 +63,32 @@ export default function Navbar() {
                 </a>
               </motion.div>
             ))}
+
+            {/* Language toggle — segmented control */}
+            <LanguageToggle lang={lang} toggleLang={toggleLang} delay={0.55} />
+
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 }}
             >
               <a href="#agents" className="ml-3 px-5 py-2 rounded-full text-[13px] font-bold text-white btn-glossy font-heading">
-                Try Now
+                {t.nav.tryNow}
               </a>
             </motion.div>
           </div>
 
-          {/* Mobile hamburger */}
-          <button className="md:hidden relative w-10 h-10 flex items-center justify-center" onClick={() => setOpen(!open)}>
-            <div className="relative w-5 h-3.5">
-              <span className={`absolute left-0 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-5 top-1/2 -translate-y-1/2 rotate-45' : 'w-5 top-0'}`} />
-              <span className={`absolute left-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-0 opacity-0' : 'w-3 opacity-100'}`} />
-              <span className={`absolute left-0 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-5 top-1/2 -translate-y-1/2 -rotate-45' : 'w-5 bottom-0'}`} />
-            </div>
-          </button>
+          {/* Mobile: language toggle + hamburger */}
+          <div className="flex md:hidden items-center gap-2">
+            <LanguageToggle lang={lang} toggleLang={toggleLang} delay={0.3} />
+            <button className="relative w-10 h-10 flex items-center justify-center" onClick={() => setOpen(!open)}>
+              <div className="relative w-5 h-3.5">
+                <span className={`absolute left-0 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-5 top-1/2 -translate-y-1/2 rotate-45' : 'w-5 top-0'}`} />
+                <span className={`absolute left-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-0 opacity-0' : 'w-3 opacity-100'}`} />
+                <span className={`absolute left-0 h-[1.5px] bg-white rounded-full transition-all duration-300 ${open ? 'w-5 top-1/2 -translate-y-1/2 -rotate-45' : 'w-5 bottom-0'}`} />
+              </div>
+            </button>
+          </div>
         </div>
       </motion.nav>
 
@@ -111,12 +122,39 @@ export default function Navbar() {
               className="mt-8"
             >
               <a href="#agents" onClick={() => setOpen(false)} className="px-8 py-3.5 rounded-full text-base font-heading font-bold text-white btn-glossy">
-                Try Now
+                {t.nav.tryNow}
               </a>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
     </>
+  );
+}
+
+/* ─── Language Toggle (Apple-style segmented control) ─── */
+function LanguageToggle({ lang, toggleLang, delay }: { lang: Lang; toggleLang: () => void; delay: number }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay }}
+    >
+      <button
+        onClick={toggleLang}
+        className="relative flex items-center gap-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] p-[3px] backdrop-blur-sm hover:border-white/[0.15] transition-all duration-300"
+      >
+        <span className={`px-2 py-1 rounded-full text-[10px] font-mono font-medium transition-all duration-300 ${
+          lang === 'en' ? 'bg-[#a78bfa]/20 text-white/70 shadow-sm shadow-[#a78bfa]/10' : 'text-white/25'
+        }`}>
+          EN
+        </span>
+        <span className={`px-2 py-1 rounded-full text-[10px] font-mono font-medium transition-all duration-300 ${
+          lang === 'zh' ? 'bg-[#a78bfa]/20 text-white/70 shadow-sm shadow-[#a78bfa]/10' : 'text-white/25'
+        }`}>
+          中
+        </span>
+      </button>
+    </motion.div>
   );
 }

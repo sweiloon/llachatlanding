@@ -2,20 +2,14 @@
 
 import { useRef } from 'react';
 import { motion, useMotionValue, useSpring, MotionValue } from 'framer-motion';
+import { useLanguage } from '@/lib/i18n';
 
 interface Props {
   shapeName: string;
 }
 
 /* ─── Word with glow wave animation ─── */
-const WORDS = [
-  { text: 'AI', accent: false },
-  { text: 'That', accent: false },
-  { text: 'Feels', accent: false },
-  { text: 'Human.', accent: true },
-];
-
-function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }) {
+function HeroWord({ word, index }: { word: { text: string; accent: boolean }; index: number }) {
   return (
     <motion.span
       initial={{ opacity: 0, y: 50, filter: 'blur(12px)' }}
@@ -41,7 +35,6 @@ function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }
           : '0 0 20px rgba(255,255,255,0.03)',
       }}
     >
-      {/* Glow wave animation */}
       <motion.span
         animate={{
           textShadow: word.accent
@@ -71,7 +64,7 @@ function HeroWord({ word, index }: { word: typeof WORDS[number]; index: number }
 }
 
 /* ─── Shimmer badge ─── */
-function ShimmerBadge() {
+function ShimmerBadge({ text }: { text: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: 'blur(8px)' }}
@@ -90,7 +83,7 @@ function ShimmerBadge() {
           <span className="relative rounded-full h-2 w-2 bg-[#a78bfa]" />
         </span>
         <span className="font-mono text-[10px] sm:text-[11px] text-[#a78bfa]/50 tracking-[0.12em] uppercase">
-          Neural Trust Engine v3.2
+          {text}
         </span>
       </div>
     </motion.div>
@@ -99,6 +92,7 @@ function ShimmerBadge() {
 
 /* ─── Main Hero ─── */
 export default function Hero({ shapeName }: Props) {
+  const { t } = useLanguage();
   const btnRef = useRef<HTMLDivElement>(null);
   const bx = useMotionValue(0);
   const by = useMotionValue(0);
@@ -138,20 +132,16 @@ export default function Hero({ shapeName }: Props) {
       onClick={triggerMorph}
       className="relative min-h-screen min-h-[100dvh] flex flex-col items-center justify-center px-5 sm:px-8 z-10 overflow-hidden"
     >
-      {/* Subtle dark backdrop behind text for readability */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[52%] w-[800px] h-[200px] bg-[#050505]/25 rounded-full blur-[100px] pointer-events-none" />
 
-      {/* Badge */}
-      <ShimmerBadge />
+      <ShimmerBadge text={t.hero.badge} />
 
-      {/* Title — unified white with accent + glow wave */}
       <h1 className="relative font-display font-bold text-center leading-[0.88] tracking-[-0.045em] select-none text-[2.6rem] sm:text-[4.2rem] md:text-[6rem] lg:text-[8rem] xl:text-[9.5rem] 2xl:text-[10.5rem]">
-        {WORDS.map((w, i) => (
-          <HeroWord key={w.text} word={w} index={i} />
+        {t.hero.words.map((w, i) => (
+          <HeroWord key={`${w.text}-${i}`} word={w} index={i} />
         ))}
       </h1>
 
-      {/* Shape indicator — clickable */}
       <motion.button
         onClick={(e) => { e.stopPropagation(); triggerMorph(); }}
         initial={{ opacity: 0, y: 10 }}
@@ -177,22 +167,20 @@ export default function Hero({ shapeName }: Props) {
           {shapeName}
         </motion.span>
         <span className="hidden sm:inline font-mono text-[7px] text-white/10 tracking-wider uppercase ml-1 group-hover:text-white/20 transition-colors">
-          Click to morph
+          {t.hero.clickToMorph}
         </span>
       </motion.button>
 
-      {/* Subtitle */}
       <motion.p
         initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         transition={{ duration: 0.7, delay: 1.4 }}
         className="mt-5 sm:mt-6 text-[13px] sm:text-base md:text-lg text-white/20 text-center max-w-md sm:max-w-xl leading-relaxed px-2"
       >
-        Next-generation conversational AI so natural,{' '}
-        <span className="text-white/35">your customers won&apos;t know the difference.</span>
+        {t.hero.subtitle1}{' '}
+        <span className="text-white/35">{t.hero.subtitle2}</span>
       </motion.p>
 
-      {/* CTAs — Glossy buttons */}
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
@@ -213,7 +201,7 @@ export default function Hero({ shapeName }: Props) {
             className="btn-glossy group relative inline-flex items-center gap-2 px-7 sm:px-9 py-3.5 sm:py-4 font-heading font-bold rounded-full text-sm sm:text-[15px] overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-2">
-              Meet Our Agents
+              {t.hero.cta1}
               <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.4, ease: 'easeInOut' }}>→</motion.span>
             </span>
             <div className="absolute top-0 left-[-100%] w-[60%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 group-hover:left-[200%] transition-all duration-700" />
@@ -232,12 +220,11 @@ export default function Hero({ shapeName }: Props) {
             href="#about"
             className="btn-glass inline-flex items-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full text-sm text-white/40 font-medium"
           >
-            Learn More
+            {t.hero.cta2}
           </a>
         </motion.div>
       </motion.div>
 
-      {/* Trust indicators */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -245,25 +232,20 @@ export default function Hero({ shapeName }: Props) {
         className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-5"
         onClick={(e) => e.stopPropagation()}
       >
-        {[
-          { icon: '◈', label: 'No sign-up required' },
-          { icon: '◉', label: 'Free to try' },
-          { icon: '⏣', label: 'Enterprise ready' },
-        ].map((t, i) => (
+        {t.hero.trust.map((item, i) => (
           <motion.div
-            key={t.label}
+            key={item.label}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 2.3 + i * 0.1 }}
             className="flex items-center gap-1.5 group cursor-default"
           >
-            <span className="text-[#a78bfa]/20 text-[10px] group-hover:text-[#a78bfa]/45 transition-colors">{t.icon}</span>
-            <span className="font-mono text-[9px] sm:text-[10px] text-white/[0.12] group-hover:text-white/25 transition-colors tracking-wider">{t.label}</span>
+            <span className="text-[#a78bfa]/20 text-[10px] group-hover:text-[#a78bfa]/45 transition-colors">{item.icon}</span>
+            <span className="font-mono text-[9px] sm:text-[10px] text-white/[0.12] group-hover:text-white/25 transition-colors tracking-wider">{item.label}</span>
           </motion.div>
         ))}
       </motion.div>
 
-      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -275,7 +257,7 @@ export default function Hero({ shapeName }: Props) {
           transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           className="flex flex-col items-center gap-2"
         >
-          <span className="font-mono text-[7px] text-white/10 tracking-[0.2em] uppercase">Scroll</span>
+          <span className="font-mono text-[7px] text-white/10 tracking-[0.2em] uppercase">{t.hero.scroll}</span>
           <div className="w-5 h-8 rounded-full border border-white/[0.06] flex justify-center pt-2">
             <motion.div
               animate={{ opacity: [0.5, 0.1, 0.5], y: [0, 8, 0] }}

@@ -15,20 +15,20 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: var(--font-body), system-ui, sans-serif;
+  font-family: var(--font-body), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
   background: #050505;
   overflow-x: hidden;
 }
 
 /* Headings */
 h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: var(--font-heading), system-ui, sans-serif;
+  font-family: var(--font-heading), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 .font-mono, pre, code {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--font-mono), "SF Mono", monospace;
 }
 .font-display {
-  font-family: var(--font-display), var(--font-heading), system-ui, sans-serif;
+  font-family: var(--font-display), var(--font-heading), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 
 /* Selection */

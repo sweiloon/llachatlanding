@@ -1,27 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-
-const items = [
-  'Human-Like AI',
-  '◈',
-  '97% Trust Score',
-  '◈',
-  'WhatsApp Native',
-  '◈',
-  'Real-Time Empathy',
-  '◈',
-  'Zero Friction',
-  '◈',
-  '24/7 Available',
-  '◈',
-  'Domain Trained',
-  '◈',
-  'Self-Evolving',
-  '◈',
-];
+import { useLanguage } from '@/lib/i18n';
 
 export default function Marquee() {
+  const { t } = useLanguage();
+  const items: string[] = [];
+  t.marquee.forEach((item) => {
+    items.push(item, '◈');
+  });
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

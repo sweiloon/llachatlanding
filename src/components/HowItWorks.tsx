@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { useGyroscope } from '@/lib/useGyroscope';
+import { useLanguage } from '@/lib/i18n';
 
 interface GyroTilt { x: number; y: number; }
 
@@ -24,39 +25,40 @@ function GradientCard({
   const [hovering, setHovering] = useState(false);
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
-      animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        transform: `perspective(1000px) rotateX(${tilt.x * 6}deg) rotateY(${tilt.y * 6}deg)`,
-        transition: 'transform 0.3s ease-out',
-      }}
-      onMouseMove={(e) => {
-        const rect = ref.current?.getBoundingClientRect();
-        if (!rect) return;
-        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-        setHovering(true);
-      }}
-      onMouseLeave={() => setHovering(false)}
-      className={`group relative p-px rounded-2xl sm:rounded-3xl overflow-hidden ${className}`}
-    >
+    <div style={{
+      transform: `perspective(1000px) rotateX(${tilt.x * 6}deg) rotateY(${tilt.y * 6}deg)`,
+      transition: 'transform 0.3s ease-out',
+    }}>
       <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-        className="absolute inset-[-80%] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-        style={{ background: 'conic-gradient(from 0deg, transparent 30%, rgba(167,139,250,0.2) 38%, transparent 45%, rgba(129,140,248,0.12) 55%, transparent 65%)' }}
-      />
-      <div className="absolute inset-0 rounded-[inherit] border border-white/[0.06] group-hover:border-transparent transition-colors duration-500 pointer-events-none" />
+        ref={ref}
+        initial={{ opacity: 0, y: 50, filter: 'blur(8px)' }}
+        animate={isInView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {}}
+        transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+        onMouseMove={(e) => {
+          const rect = ref.current?.getBoundingClientRect();
+          if (!rect) return;
+          setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+          setHovering(true);
+        }}
+        onMouseLeave={() => setHovering(false)}
+        className={`group relative p-px rounded-2xl sm:rounded-3xl overflow-hidden ${className}`}
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
+          className="absolute inset-[-80%] opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+          style={{ background: 'conic-gradient(from 0deg, transparent 30%, rgba(167,139,250,0.2) 38%, transparent 45%, rgba(129,140,248,0.12) 55%, transparent 65%)' }}
+        />
+        <div className="absolute inset-0 rounded-[inherit] border border-white/[0.06] group-hover:border-transparent transition-colors duration-500 pointer-events-none" />
 
-      <div className="relative rounded-[inherit] h-full card-liquid-glass !border-0">
-        {hovering && (
-          <div className="absolute inset-0 pointer-events-none rounded-[inherit] z-10" style={{ background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.07), transparent 55%)` }} />
-        )}
-        {children}
-      </div>
-    </motion.div>
+        <div className="relative rounded-[inherit] h-full card-liquid-glass !border-0">
+          {hovering && (
+            <div className="absolute inset-0 pointer-events-none rounded-[inherit] z-10" style={{ background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(167,139,250,0.07), transparent 55%)` }} />
+          )}
+          {children}
+        </div>
+      </motion.div>
+    </div>
   );
 }
 
@@ -67,10 +69,10 @@ function ConnectorLine({ delay }: { delay: number }) {
   return (
     <div ref={ref} className="hidden lg:flex items-center justify-center w-12 xl:w-16">
       <svg viewBox="0 0 50 20" className="w-full h-5" fill="none">
-        <motion.path d="M0 10 H50" stroke="url(#lineGrad)" strokeWidth="1" strokeDasharray="4 4" initial={{ pathLength: 0, opacity: 0 }} animate={isInView ? { pathLength: 1, opacity: 1 } : {}} transition={{ duration: 0.8, delay, ease: 'easeOut' }} />
+        <motion.path d="M0 10 H50" stroke="url(#lineGrad2)" strokeWidth="1" strokeDasharray="4 4" initial={{ pathLength: 0, opacity: 0 }} animate={isInView ? { pathLength: 1, opacity: 1 } : {}} transition={{ duration: 0.8, delay, ease: 'easeOut' }} />
         <motion.circle cx="48" cy="10" r="2" fill="#a78bfa" initial={{ opacity: 0, scale: 0 }} animate={isInView ? { opacity: 0.5, scale: 1 } : {}} transition={{ delay: delay + 0.6 }} />
         <defs>
-          <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="lineGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="rgba(167,139,250,0.15)" />
             <stop offset="100%" stopColor="rgba(167,139,250,0.3)" />
           </linearGradient>
@@ -140,16 +142,13 @@ function ChatBubbles() {
   );
 }
 
-const steps = [
-  { num: '01', title: 'Choose Your Agent', desc: 'Select the AI agent that matches your needs. Each one is domain-trained with a unique personality.', Visual: AgentSelector },
-  { num: '02', title: 'Open WhatsApp', desc: 'Click the chat button — instant redirect to WhatsApp. No sign-ups, no apps, no friction.', Visual: PhoneMockup },
-  { num: '03', title: 'Start Talking', desc: 'Say hello and experience the difference. Natural conversations that feel genuinely human.', Visual: ChatBubbles },
-];
+const stepVisuals = [AgentSelector, PhoneMockup, ChatBubbles];
 
 export default function HowItWorks() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-60px' });
   const tilt = useGyroscope();
+  const { t } = useLanguage();
 
   return (
     <section id="how" className="relative z-10 py-16 sm:py-24 md:py-32 px-5 sm:px-8">
@@ -157,52 +156,55 @@ export default function HowItWorks() {
 
       <div className="max-w-6xl mx-auto" ref={sectionRef}>
         <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="flex items-center gap-3 mb-4">
-          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">004</span>
+          <span className="font-mono text-[10px] text-[#a78bfa]/30 tracking-[0.3em] uppercase">{t.how.num}</span>
           <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }} className="h-px flex-1 bg-gradient-to-r from-[#a78bfa]/10 to-transparent origin-left" />
         </motion.div>
 
         <motion.h2 initial={{ opacity: 0, y: 30, filter: 'blur(6px)' }} whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }} viewport={{ once: true }} className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.05] tracking-tight">
-          How It <span className="text-gradient">Works</span>
+          {t.how.title} <span className="text-gradient">{t.how.titleAccent}</span>
         </motion.h2>
 
         <motion.p initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }} className="text-white/20 text-sm sm:text-base max-w-lg mt-3 mb-10 sm:mb-16">
-          Three steps. Zero friction. Instant conversations.
+          {t.how.subtitle}
         </motion.p>
 
         <div className="flex flex-col lg:flex-row lg:items-stretch gap-4 lg:gap-0">
-          {steps.map((step, i) => (
-            <div key={step.num} className="flex flex-col lg:flex-row lg:items-stretch lg:flex-1">
-              <GradientCard delay={i * 0.15} className="flex-1" tilt={tilt}>
-                <div className="relative p-5 sm:p-6 md:p-7 h-full flex flex-col">
-                  <div className="absolute top-3 right-4 font-heading text-[60px] sm:text-[80px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">{step.num}</div>
-                  <div className="relative z-10 mb-4"><step.Visual /></div>
-                  <div className="relative z-10 inline-flex items-center gap-2 mb-3">
-                    <motion.div animate={isInView ? { scale: [0, 1] } : {}} transition={{ delay: 0.5 + i * 0.2, type: 'spring', stiffness: 300 }} className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#a78bfa]/[0.06] border border-[#a78bfa]/[0.1] flex items-center justify-center font-heading text-xs sm:text-sm font-bold text-[#a78bfa]/50 backdrop-blur-sm">{step.num}</motion.div>
-                    <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-[#a78bfa]/80 transition-colors duration-500">{step.title}</h3>
+          {t.how.steps.map((step, i) => {
+            const Visual = stepVisuals[i];
+            return (
+              <div key={step.num} className="flex flex-col lg:flex-row lg:items-stretch lg:flex-1">
+                <GradientCard delay={i * 0.15} className="flex-1" tilt={tilt}>
+                  <div className="relative p-5 sm:p-6 md:p-7 h-full flex flex-col">
+                    <div className="absolute top-3 right-4 font-heading text-[60px] sm:text-[80px] font-extrabold text-white/[0.015] leading-none select-none pointer-events-none">{step.num}</div>
+                    <div className="relative z-10 mb-4"><Visual /></div>
+                    <div className="relative z-10 inline-flex items-center gap-2 mb-3">
+                      <motion.div animate={isInView ? { scale: [0, 1] } : {}} transition={{ delay: 0.5 + i * 0.2, type: 'spring', stiffness: 300 }} className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#a78bfa]/[0.06] border border-[#a78bfa]/[0.1] flex items-center justify-center font-heading text-xs sm:text-sm font-bold text-[#a78bfa]/50 backdrop-blur-sm">{step.num}</motion.div>
+                      <h3 className="font-heading text-base sm:text-lg font-bold text-white tracking-tight group-hover:text-[#a78bfa]/80 transition-colors duration-500">{step.title}</h3>
+                    </div>
+                    <p className="relative z-10 text-[11px] sm:text-xs text-white/20 leading-relaxed group-hover:text-white/30 transition-colors duration-500 flex-1">{step.desc}</p>
                   </div>
-                  <p className="relative z-10 text-[11px] sm:text-xs text-white/20 leading-relaxed group-hover:text-white/30 transition-colors duration-500 flex-1">{step.desc}</p>
-                </div>
-              </GradientCard>
-              {i < steps.length - 1 && (
-                <>
-                  <ConnectorLine delay={0.6 + i * 0.2} />
-                  <div className="lg:hidden flex justify-center py-1">
-                    <motion.div initial={{ scaleY: 0 }} animate={isInView ? { scaleY: 1 } : {}} transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }} className="w-px h-6 bg-gradient-to-b from-[#a78bfa]/15 to-transparent origin-top" />
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+                </GradientCard>
+                {i < t.how.steps.length - 1 && (
+                  <>
+                    <ConnectorLine delay={0.6 + i * 0.2} />
+                    <div className="lg:hidden flex justify-center py-1">
+                      <motion.div initial={{ scaleY: 0 }} animate={isInView ? { scaleY: 1 } : {}} transition={{ delay: 0.5 + i * 0.15, duration: 0.4 }} className="w-px h-6 bg-gradient-to-b from-[#a78bfa]/15 to-transparent origin-top" />
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.6 }} className="mt-10 sm:mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
           <div className="flex items-center gap-2 text-white/15 text-xs font-mono">
             <motion.span animate={{ opacity: [0.3, 0.8, 0.3] }} transition={{ repeat: Infinity, duration: 2 }} className="w-1.5 h-1.5 rounded-full bg-[#a78bfa]/30" />
-            Ready in under 60 seconds
+            {t.how.readyText}
           </div>
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <a href="#agents" className="btn-glass group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-heading font-bold text-white/50 hover:text-white transition-all duration-500">
-              Get Started
+              {t.how.ctaText}
               <motion.span animate={{ x: [0, 4, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>
             </a>
           </motion.div>
