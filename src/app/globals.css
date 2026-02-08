@@ -4,7 +4,6 @@
   --font-sans: var(--font-body);
   --font-heading: var(--font-heading);
   --font-mono: var(--font-mono);
-  --font-display: var(--font-display);
 }
 
 :root {
@@ -28,7 +27,8 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: var(--font-mono), "SF Mono", monospace;
 }
 .font-display {
-  font-family: var(--font-display), var(--font-heading), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-family: var(--font-heading), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  font-weight: 800;
 }
 
 /* Selection */

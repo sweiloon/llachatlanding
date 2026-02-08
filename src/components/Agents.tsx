@@ -24,8 +24,9 @@ function AgentCard({ agent, index, tilt }: { agent: { name: string; role: string
   return (
     /* Outer div for gyroscope tilt — prevents Framer Motion from overriding */
     <div style={{
-      transform: `perspective(1000px) rotateX(${tilt.x * 8}deg) rotateY(${tilt.y * 8}deg)`,
-      transition: 'transform 0.3s ease-out',
+      transform: `perspective(1000px) rotateX(${tilt.x * 16}deg) rotateY(${tilt.y * 16}deg)`,
+      transition: 'transform 0.15s ease-out',
+      willChange: 'transform',
     }}>
       <motion.div
         ref={ref}

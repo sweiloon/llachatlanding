@@ -173,8 +173,9 @@ function StatCard({ stat, index, tilt }: { stat: { value: string; suffix: string
 
   return (
     <div style={{
-      transform: `perspective(1000px) rotateX(${tilt.x * 6}deg) rotateY(${tilt.y * 6}deg)`,
-      transition: 'transform 0.3s ease-out',
+      transform: `perspective(1000px) rotateX(${tilt.x * 12}deg) rotateY(${tilt.y * 12}deg)`,
+      transition: 'transform 0.15s ease-out',
+      willChange: 'transform',
     }}>
       <motion.div
         ref={ref}

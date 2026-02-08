@@ -1,28 +1,22 @@
 import type { Metadata } from "next";
-import { Syne, Bricolage_Grotesque, Outfit, JetBrains_Mono } from "next/font/google";
+import { Urbanist, DM_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
 
-const bricolage = Bricolage_Grotesque({
+const urbanist = Urbanist({
   variable: "--font-heading",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const outfit = Outfit({
+const dmSans = DM_Sans({
   variable: "--font-body",
   subsets: ["latin"],
 });
 
-const jetbrains = JetBrains_Mono({
+const dmMono = DM_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   weight: ["400", "500"],
-});
-
-const syne = Syne({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${bricolage.variable} ${outfit.variable} ${jetbrains.variable} ${syne.variable} antialiased bg-[#050505] text-white`}>
+      <body className={`${urbanist.variable} ${dmSans.variable} ${dmMono.variable} antialiased bg-[#050505] text-white`}>
         {children}
       </body>
     </html>

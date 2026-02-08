@@ -232,8 +232,8 @@ export default function Footer() {
 
         {/* Footer bottom */}
         <div className="border-t border-white/[0.04] pt-8 sm:pt-10">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 items-start">
-            <div className="col-span-2 md:col-span-1">
+          <div className="flex flex-col gap-8 md:grid md:grid-cols-3 md:gap-8 items-start">
+            <div>
               <motion.div whileHover={{ scale: 1.03 }} className="flex items-center gap-1 mb-3 cursor-default">
                 <span className="font-display font-bold text-base tracking-tight">
                   LLa<span className="text-gradient">chat</span>
@@ -268,7 +268,7 @@ export default function Footer() {
               </div>
             </div>
 
-            <div className="col-span-2 md:col-span-1 md:text-right">
+            <div className="md:text-right">
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.02] border border-white/[0.05] mb-3 cursor-default"
