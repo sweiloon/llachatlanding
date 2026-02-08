@@ -224,8 +224,8 @@ export default function About() {
   const { t } = useLanguage();
 
   return (
-    <section id="about" className="relative z-10 py-12 sm:py-16 md:py-22 px-5 sm:px-8">
-      <div className="section-line max-w-6xl mx-auto mb-12 sm:mb-16" />
+    <section id="about" className="relative z-10 py-8 sm:py-11 md:py-16 px-5 sm:px-8">
+      <div className="section-line max-w-6xl mx-auto mb-8 sm:mb-11" />
 
       <div className="max-w-6xl mx-auto relative">
         {/* Floating particles — hidden on mobile for performance */}
